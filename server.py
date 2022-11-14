@@ -12,7 +12,7 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, url_for, redirect, Response
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -29,7 +29,7 @@ app = Flask(__name__, template_folder=tmpl_dir)
 #
 #     DATABASEURI = "postgresql://gravano:foobar@34.75.94.195/proj1part2"
 #
-DATABASEURI = "postgresql://user:password@34.75.94.195/proj1part2"
+DATABASEURI = "postgresql://cg3236:4602@34.75.94.195/proj1part2"
 
 
 #
@@ -170,11 +170,38 @@ def add():
   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
   return redirect('/')
 
+#signup page
+@app.route('/signup', methods=['GET','POST'])
+def signup():
+  if request.method == 'POST':
+    username = request.form.get['username']
+    login = request.form.get['login']
+    name = request.form.get['name']
+    email = request.form.get['email']
+    g.conn.execute('INSERT INTO users(username, login, name, email) VALUES (%s, %s, %s, %s)', username, login, name, email)
+    #WHY DON'T WE HAVE TO COMMIT
+    #what if it fails??
+    #returning the userid so they can login
+    cursor = g.conn.execute("SELECT uid FROM users WHERE username = username, login=login, name=name, email = email")
+    uids = []
+    for userids in cursor:
+      uids.append(userids[0]) 
+    cursor.close()
+    context = dict(data = userids)
+    return render_template("home.html", **context)
 
-@app.route('/login')
+  return render_template("signup.html", boolean=True)
+
+#loginpage
+@app.route('/login', methods=['GET','POST'])
 def login():
-    abort(401)
-    this_is_never_executed()
+  if request.method == 'POST':
+    userid = request.form['userid']
+    login = request.form['login']
+
+    return render_template("login.html", boolean=True)
+    #abort(401)
+    #this_is_never_executed()
 
 
 if __name__ == "__main__":
