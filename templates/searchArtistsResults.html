@@ -1,0 +1,22 @@
+<table>
+  <tr>
+    <th>Stage Name</th>
+    <th>Birthday</th>
+    <th>Real Name</th>
+    <th>Year Started</th>
+    <th>Years Active</th>
+    <th>Genre</th>
+    <th>Role</th>
+  </tr>
+  <tr>
+  {% for a in artists %}
+    <td>{{a.stage_name}}</td>
+    <td>{{a.birthday}}</td>
+    <td>{{a.real_name}}</td>
+    <td>{{a.year_started}}</td>
+    <td>{{a.years_active}}</td>
+    <td>{{a.genre}}</td>
+    <td>{{a.role}}</td>
+  {% endfor %}
+  </tr>
+</table>

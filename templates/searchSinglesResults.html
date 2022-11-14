@@ -1,0 +1,17 @@
+<table>
+  <tr>
+    <th>Title</th>
+    <th>Release Date</th>
+    <th>Main Artist</th>
+    <th>Genre</th>
+    <th>Album It's Part Of</th>
+  </tr>
+  <tr>
+  {% for s in singles%}
+    <td>{{s.title}}</td>
+    <td>{{s.release_date}}</td>
+    <td>{{s.genre}}</td>
+    <td>{{s.part_of_album}}</td>
+  {% endfor %}
+  </tr> 
+</table>

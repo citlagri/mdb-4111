@@ -1,0 +1,18 @@
+<table>
+  <tr>
+    <th>Award</th>
+    <th>Year</th>
+    <th>Title</th>
+    <th>Release Date</th>
+    <th>Main Artist</th>
+  </tr>
+  <tr>
+  {% for g in awarded_to%}
+    <td>{{g.award}}</td>
+    <td>{{g.year}}</td>
+    <td>{{g.genre}}</td>
+    <td>{{g.release_date}}</td>
+    <td>{{g.main_artist}}</td>
+  {% endfor %}
+  </tr>
+</table>
