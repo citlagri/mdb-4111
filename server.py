@@ -284,29 +284,29 @@ cursor = g.conn.execute("SELECT role FROM artists WHERE stage_name = userInput")
 #SEARCH SINGLES PAGE
 
 @app.route('/searchSingles/', methods=['GET','POST'])
-def searchArtists():    
+def searchSingles():    
 
   if request.method == 'POST':
         userInput = request.form['title']
 
 #HOW DO I DEAL WITH SQL INJECTION VULNERABILITY WITH THE USERINPUT 
 
-cursor = g.conn.execute("SELECT title FROM artists WHERE title = userInput")
+cursor = g.conn.execute("SELECT title FROM singles WHERE title = userInput")
  title = []
  for result in cursor:
    title.append(result['title'])
 
-cursor = g.conn.execute("SELECT release_date FROM artists WHERE title = userInput")
+cursor = g.conn.execute("SELECT release_date FROM singles WHERE title = userInput")
  release_date = []
  for result in cursor:
    release_date.append(result['release_date'])
 
-cursor = g.conn.execute("SELECT genre FROM artists WHERE title = userInput")
+cursor = g.conn.execute("SELECT genre FROM singles WHERE title = userInput")
  genre = []
  for result in cursor:
    genre.append(result['genre'])
 
-cursor = g.conn.execute("SELECT role FROM artists WHERE title = userInput")
+cursor = g.conn.execute("SELECT role FROM singles WHERE title = userInput")
  role = []
  for result in cursor:
    role.append(result['role'])
@@ -319,6 +319,78 @@ cursor = g.conn.execute("SELECT role FROM artists WHERE title = userInput")
           "role": role[0],
        }
    return render_template("searchSinglesResults.html", **context)
+#------------------------------------------------------------------------------------------------
+#SEARCH GRAMMYS WON BY AN ARTIST 
+
+@app.route('/searchGrammy/', methods=['GET','POST'])
+def searchGrammy():   
+
+  if request.method == 'POST':
+        userInput = request.form['main_artist']
+
+#HOW DO I DEAL WITH SQL INJECTION VULNERABILITY WITH THE USERINPUT
+
+cursor = g.conn.execute("SELECT award FROM awarded_to WHERE main_artist = userInput")
+ award = []
+ for result in cursor:
+   award.append(result['award'])
+
+cursor = g.conn.execute("SELECT year FROM awarded_to WHERE main_artist = userInput")
+ year = []
+ for result in cursor:
+   year.append(result['year'])
+
+cursor = g.conn.execute("SELECT genre FROM awarded_to WHERE main_artist = userInput")
+ genre = []
+ for result in cursor:
+   genre.append(result['genre'])
+
+cursor = g.conn.execute("SELECT release_date FROM awarded_to WHERE main_artist = userInput")
+ release_date = []
+ for result in cursor:
+   release_date.append(result['release_date'])
+
+cursor = g.conn.execute("SELECT main_artist FROM awarded_to WHERE main_artist = userInput")
+ main_artist = []
+ for result in cursor:
+   main_artist.append(result['main_artist'])
+
+ cursor.close()
+
+context = {
+          "award": award[0],
+	  "year": year[0],
+          "genre": genre[0],
+          "release_date": release_date[0],
+          "main_artist_": main_artist[0],
+	}
+   return render_template("searchGrammyResults.html", **context)
+
+#------------------------------------------------------------------------------------------------
+#YOUR BOOKMARKED ARTISTS 
+# how are we going to look it up -> they enter their username again? -> same goes for singles
+
+
+#------------------------------------------------------------------------------------------------
+#BOOKMARK AN ARTIST
+#they enter an artist and we look for them in the artists table and then join it with their table
+# or wtf are we doing with this -> the same for singles 
+
+#------------------------------------------------------------------------------------------------
+# YOUR BOOKMARKED SINGLES
+
+
+#------------------------------------------------------------------------------------------------
+#BOOKMARK A SINGLE
+
+#------------------------------------------------------------------------------------------------
+#RATINGS 
+
+
+#------------------------------------------------------------------------------------------------
+#REVIEWS
+
+
 #------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
   import click
