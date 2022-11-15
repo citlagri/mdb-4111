@@ -170,6 +170,20 @@ def add():
   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
   return redirect('/')
 
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+  #show them all of their reviews
+  if request.method == 'POST':
+    uid = request.form.get['userid']
+    cursor = g.conn.execute("SELECT content, title_name, rating, since FROM review WHERE uid = %s", uid)
+    reviews = []
+    for thesereviews in reviews:
+      reviews.appaend(thesereviews[0])
+    cursor.close()
+    review = dict(r = thesereviews)
+    return render_template("home.html", **review)
+  return render_template("home.html", boolean=True) 
+
 #signup page
 @app.route('/signup', methods=['GET','POST'])
 def signup():
@@ -179,10 +193,7 @@ def signup():
     name = request.form.get['name']
     email = request.form.get['email']
     g.conn.execute('INSERT INTO users(username, login, name, email) VALUES (%s, %s, %s, %s)', username, login, name, email)
-    #WHY DON'T WE HAVE TO COMMIT
-    #what if it fails??
-    #returning the userid so they can login
-    cursor = g.conn.execute("SELECT uid FROM users WHERE username = username, login=login, name=name, email = email")
+    cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s, login=%s, name=%s, email = %s",username,login,name,email)
     uids = []
     for userids in cursor:
       uids.append(userids[0]) 
@@ -196,12 +207,29 @@ def signup():
 @app.route('/login', methods=['GET','POST'])
 def login():
   if request.method == 'POST':
-    userid = request.form['userid']
-    login = request.form['login']
-
+    userid = request.form.get['userid']
+    login = request.form.get['login']
+    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s, login = %s", userid,login)
+    users = []
+    for usersid in cursor:
+      users.append(users[0])
+      cursor.close()
+      context = dict(data = users)
+      if(len(users) != 0):
+        return render_template("home.html", **context)
+      else:
+        return render_template("login.html", boolean=True)
+      
     return render_template("login.html", boolean=True)
     #abort(401)
     #this_is_never_executed()
+
+@app.route('/writereview', methods=['GET','POST'])
+def writereview():
+  
+
+  if request.method == 'POST':
+    
 
 
 if __name__ == "__main__":

@@ -34,28 +34,12 @@
     }
   </style>
   <body>
-    <h1>HOME</h1>
-    <div>
-      This is ur userid: {{data}}. Don't share this inforation with anyone
-    </div>
-
-        <form action="/home" method="post">
-        <div>Want to see all your reviews? Enter Your Userid <br>
-            <input type="text" name="userid" placeholder="#"/><br>
-        </div><br>
-        <button type="submit">Submit</button>
-    </form>
-
-    #printing the reviews
-    <div>
-      {%for n in r%}
-      <div>{{n}}</div>
-      {% endfor %}
-    </div>
-
-    <h2>See all artist</h2>
-    <h3>See all Grammy's</h3>
-
+    <h1 align="center">Write A Review</h1>
+    <form>
+      <textarea name="review" id="review"></textarea>
+      <div align="center">
+        <button type="submit">Post Review</button>
+      </div>
     </form>
   </body>
 </html>
