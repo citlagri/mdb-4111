@@ -18,6 +18,8 @@ tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
 
+#------------------------------------------------------------------------------------------------
+
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
 #
@@ -30,12 +32,13 @@ app = Flask(__name__, template_folder=tmpl_dir)
 #     DATABASEURI = "postgresql://gravano:foobar@34.75.94.195/proj1part2"
 #
 DATABASEURI = "postgresql://cg3236:4602@34.75.94.195/proj1part2"
-
-
 #
 # This line creates a database engine that knows how to connect to the URI above.
 #
 engine = create_engine(DATABASEURI)
+
+#------------------------------------------------------------------------------------------------
+
 
 #
 # Example of running queries in your database
@@ -75,6 +78,7 @@ def teardown_request(exception):
   except Exception as e:
     pass
 
+#------------------------------------------------------------------------------------------------
 
 #
 # @app.route is a decorator around index() that means:
@@ -102,6 +106,7 @@ def index():
 
   """
 
+#------------------------------------------------------------------------------------------------
   # DEBUG: this is debugging code to see what request looks like
   print(request.args)
 
@@ -114,6 +119,7 @@ def index():
   for result in cursor:
     names.append(result['name'])  # can also be accessed using result[0]
   cursor.close()
+#------------------------------------------------------------------------------------------------
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -150,6 +156,7 @@ def index():
   #
   return render_template("index.html", **context)
 
+#------------------------------------------------------------------------------------------------
 #
 # This is an example of a different path.  You can see it at:
 #
@@ -162,6 +169,7 @@ def index():
 def another():
   return render_template("another.html")
 
+#------------------------------------------------------------------------------------------------
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
@@ -170,8 +178,15 @@ def add():
   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
   return redirect('/')
 
-#signup page
-@app.route('/signup', methods=['GET','POST'])
+
+#@app.route('/login')
+#def login():
+ #   abort(401)
+  #  this_is_never_executed()
+#------------------------------------------------------------------------------------------------
+#SIGNUP PAGE 
+
+@app.route('/signup/', methods=['GET','POST'])
 def signup():
   if request.method == 'POST':
     username = request.form.get['username']
@@ -192,8 +207,10 @@ def signup():
 
   return render_template("signup.html", boolean=True)
 
-#loginpage
-@app.route('/login', methods=['GET','POST'])
+#------------------------------------------------------------------------------------------------
+#lOGIN PAGE 
+
+@app.route('/login/', methods=['GET','POST'])
 def login():
   if request.method == 'POST':
     userid = request.form['userid']
@@ -203,7 +220,106 @@ def login():
     #abort(401)
     #this_is_never_executed()
 
+#------------------------------------------------------------------------------------------------
+#SEARCH ARTISTS PAGE
 
+@app.route('/searchArtists/', methods=['GET','POST'])
+def searchArtists(): 
+
+  if request.method == 'POST':
+	userInput = request.form['stage_name']
+
+#HOW DO I DEAL WITH SQL INJECTION VULNERABILITY WITH THE USERINPUT 
+
+ cursor = g.conn.execute("SELECT stage_name FROM artists WHERE stage_name = userInput")
+ stage_name = []
+ for result in cursor:
+   stage_name.append(result['stage_name'])  # can also be accessed using result[0]
+
+cursor = g.conn.execute("SELECT birthday FROM artists WHERE stage_name = userInput")
+ birthday = []
+ for result in cursor:
+   birthday.append(result['birthday'])
+
+cursor = g.conn.execute("SELECT real_name FROM artists WHERE stage_name = userInput")
+ real_name = []
+ for result in cursor:
+   real_name.append(result['real_name'])
+
+cursor = g.conn.execute("SELECT year_started FROM artists WHERE stage_name = userInput")
+ year_started = []
+ for result in cursor:
+   year_started.append(result['year_started'])
+
+cursor = g.conn.execute("SELECT years_active FROM artists WHERE stage_name = userInput")
+ years_active = []
+ for result in cursor:
+   years_active.append(result['years_active'])
+
+cursor = g.conn.execute("SELECT genre FROM artists WHERE stage_name = userInput")
+ genre = []
+ for result in cursor:
+   genre.append(result['genre'])
+
+cursor = g.conn.execute("SELECT role FROM artists WHERE stage_name = userInput")
+ role = []
+ for result in cursor:
+   role.append(result['role'])
+
+ cursor.close()
+
+       context = {
+          "stage_name": stage_name[0],
+          "birthday": birthday[0],
+          "real_name": real_name[0],
+          "year_started": year_started[0],
+          "years_active": years_active[0],
+          "genre": genre[0],
+          "role": role[0],
+       }
+   return render_template("searchArtistsResults.html", **context)
+
+
+#------------------------------------------------------------------------------------------------
+#SEARCH SINGLES PAGE
+
+@app.route('/searchSingles/', methods=['GET','POST'])
+def searchArtists():    
+
+  if request.method == 'POST':
+        userInput = request.form['title']
+
+#HOW DO I DEAL WITH SQL INJECTION VULNERABILITY WITH THE USERINPUT 
+
+cursor = g.conn.execute("SELECT title FROM artists WHERE title = userInput")
+ title = []
+ for result in cursor:
+   title.append(result['title'])
+
+cursor = g.conn.execute("SELECT release_date FROM artists WHERE title = userInput")
+ release_date = []
+ for result in cursor:
+   release_date.append(result['release_date'])
+
+cursor = g.conn.execute("SELECT genre FROM artists WHERE title = userInput")
+ genre = []
+ for result in cursor:
+   genre.append(result['genre'])
+
+cursor = g.conn.execute("SELECT role FROM artists WHERE title = userInput")
+ role = []
+ for result in cursor:
+   role.append(result['role'])
+ cursor.close()
+
+       context = {
+          "title": title[0],
+          "release_date": release_date[0],
+          "genre": genre[0],
+          "role": role[0],
+       }
+   return render_template("searchSinglesResults.html", **context)
+#------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
   import click
 
