@@ -106,7 +106,7 @@ def index():
 
   """
 
-#------------------------------------------------------------------------------------------------
+
   # DEBUG: this is debugging code to see what request looks like
   print(request.args)
 
@@ -215,7 +215,7 @@ def signup():
 #------------------------------------------------------------------------------------------------
 #lOGIN PAGE 
 
-@app.route('/login/', methods=['GET','POST'])
+@app.route('/login', methods=['GET','POST'])
 def login():
   if request.method == 'POST':
     userid = request.form.get['userid']
