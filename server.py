@@ -226,7 +226,7 @@ def login():
       cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s AND login = %s", (userid, login))
       users = []
       for usersid in cursor:
-        users.append(users[0])
+        users.append(usersid)
         cursor.close()
         context = dict(data = users)
         if(len(users) != 0):
