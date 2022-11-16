@@ -221,7 +221,7 @@ def login():
   if request.method == 'POST':
     userid = request.form.get['userid']
     login = request.form.get['login']
-    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s, login = %s", userid, login)
+    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s, login = %s", (userid, login))
     users = []
     for usersid in cursor:
       users.append(users[0])
