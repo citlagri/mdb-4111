@@ -215,7 +215,7 @@ def signup():
 #------------------------------------------------------------------------------------------------
 #lOGIN PAGE 
 
-@app.route('/login/', methods=['GET','POST'])
+@app.route('/login', methods=['GET','POST'])
 def login():
   if request.method == 'POST':
     userid = request.form.get['userid']

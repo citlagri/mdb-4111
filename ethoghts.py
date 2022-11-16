@@ -18,6 +18,8 @@ tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
 
+#------------------------------------------------------------------------------------------------
+
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
 #
@@ -30,12 +32,13 @@ app = Flask(__name__, template_folder=tmpl_dir)
 #     DATABASEURI = "postgresql://gravano:foobar@34.75.94.195/proj1part2"
 #
 DATABASEURI = "postgresql://cg3236:4602@34.75.94.195/proj1part2"
-
-
 #
 # This line creates a database engine that knows how to connect to the URI above.
 #
 engine = create_engine(DATABASEURI)
+
+#------------------------------------------------------------------------------------------------
+
 
 #
 # Example of running queries in your database
@@ -75,6 +78,7 @@ def teardown_request(exception):
   except Exception as e:
     pass
 
+#------------------------------------------------------------------------------------------------
 
 #
 # @app.route is a decorator around index() that means:
@@ -102,6 +106,7 @@ def index():
 
   """
 
+#------------------------------------------------------------------------------------------------
   # DEBUG: this is debugging code to see what request looks like
   print(request.args)
 
@@ -114,6 +119,7 @@ def index():
   for result in cursor:
     names.append(result['name'])  # can also be accessed using result[0]
   cursor.close()
+#------------------------------------------------------------------------------------------------
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -150,6 +156,7 @@ def index():
   #
   return render_template("index.html", **context)
 
+#------------------------------------------------------------------------------------------------
 #
 # This is an example of a different path.  You can see it at:
 #
@@ -162,6 +169,7 @@ def index():
 def another():
   return render_template("another.html")
 
+#------------------------------------------------------------------------------------------------
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
@@ -176,6 +184,7 @@ def home():
   if request.method == 'POST':
     uid = request.form.get['userid']
     cursor = g.conn.execute("SELECT content, title_name, rating, since FROM review WHERE uid = %s", uid)
+    #how is since going to be inserted???
     reviews = []
     for thesereviews in reviews:
       reviews.appaend(thesereviews[0])
@@ -203,8 +212,10 @@ def signup():
 
   return render_template("signup.html", boolean=True)
 
-#loginpage
-@app.route('/login', methods=['GET','POST'])
+#------------------------------------------------------------------------------------------------
+#lOGIN PAGE 
+
+@app.route('/login/', methods=['GET','POST'])
 def login():
   if request.method == 'POST':
     userid = request.form.get['userid']
@@ -224,14 +235,21 @@ def login():
     #abort(401)
     #this_is_never_executed()
 
+##CHECK WHAT WRIE-A TABLEIS ACTUALLY CALLED
 @app.route('/writereview', methods=['GET','POST'])
 def writereview():
-  
-
   if request.method == 'POST':
-    
+    userid = request.form.get['userid']
+    content = request.form.get['review']
+    title = request.form.get['title']
+    rating =  request.form.get['rating']
+    g.conn.execute('INSERT INTO writes_a (uid, content, title, rating) VALUES (%s, %s, %s, %d)', userid, content, title, rating)
+    #automatically picks out rid? it's a primary key
+    #flash that their review has been received
 
+  return render_template("writereview.html", boolean = True)
 
+#------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
   import click
 
