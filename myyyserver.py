@@ -106,7 +106,7 @@ def index():
 
   """
 
-
+#------------------------------------------------------------------------------------------------
   # DEBUG: this is debugging code to see what request looks like
   print(request.args)
 
@@ -178,23 +178,15 @@ def add():
   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
   return redirect('/')
 
-@app.route('/home', methods=['GET', 'POST'])
-def home():
-  #show them all of their reviews
-  if request.method == 'POST':
-    uid = request.form.get['userid']
-    cursor = g.conn.execute("SELECT content, title_name, rating, since FROM review WHERE uid = %s", uid)
-    #how is since going to be inserted???
-    reviews = []
-    for thesereviews in reviews:
-      reviews.appaend(thesereviews[0])
-    cursor.close()
-    review = dict(r = thesereviews)
-    return render_template("home.html", **review)
-  return render_template("home.html", boolean=True) 
 
-#signup page
-@app.route('/signup', methods=['GET','POST'])
+#@app.route('/login')
+#def login():
+ #   abort(401)
+  #  this_is_never_executed()
+#------------------------------------------------------------------------------------------------
+#SIGNUP PAGE 
+
+@app.route('/signup/', methods=['GET','POST'])
 def signup():
   if request.method == 'POST':
     username = request.form.get['username']
@@ -202,7 +194,10 @@ def signup():
     name = request.form.get['name']
     email = request.form.get['email']
     g.conn.execute('INSERT INTO users(username, login, name, email) VALUES (%s, %s, %s, %s)', username, login, name, email)
-    cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s, login=%s, name=%s, email = %s",username,login,name,email)
+    #WHY DON'T WE HAVE TO COMMIT
+    #what if it fails??
+    #returning the userid so they can login
+    cursor = g.conn.execute("SELECT uid FROM users WHERE username = username, login=login, name=name, email = email")
     uids = []
     for userids in cursor:
       uids.append(userids[0]) 
@@ -215,53 +210,26 @@ def signup():
 #------------------------------------------------------------------------------------------------
 #lOGIN PAGE 
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/login/', methods=['GET','POST'])
 def login():
   if request.method == 'POST':
-    userid = request.form.get['userid']
-    login = request.form.get['login']
-    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s, login = %s", userid,login)
-    users = []
-    for usersid in cursor:
-      users.append(users[0])
-      cursor.close()
-      context = dict(data = users)
-      if(len(users) != 0):
-        return render_template("home.html", **context)
-      else:
-        return render_template("login.html", boolean=True)
-      
+    userid = request.form['userid']
+    login = request.form['login']
+
     return render_template("login.html", boolean=True)
     #abort(401)
     #this_is_never_executed()
-
-
-#------------------------------------------------------------------------------------------------
-
-##CHECK WHAT WRIE-A TABLEIS ACTUALLY CALLED
-@app.route('/writereview', methods=['GET','POST'])
-def writereview():
-  if request.method == 'POST':
-    userid = request.form.get['userid']
-    content = request.form.get['review']
-    title = request.form.get['title']
-    rating =  request.form.get['rating']
-    g.conn.execute('INSERT INTO writes_a (uid, content, title, rating) VALUES (%s, %s, %s, %d)', userid, content, title, rating)
-    #automatically picks out rid? it's a primary key
-    #flash that their review has been received
-
-  return render_template("writereview.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 #SEARCH ARTISTS PAGE
 
 @app.route('/searchArtists/', methods=['GET','POST'])
-def searchArtists():
+def searchArtists(): 
 
   if request.method == 'POST':
-        userInput = request.form['stage_name']
+	userInput = request.form['stage_name']
 
-#HOW DO I DEAL WITH SQL INJECTION VULNERABILITY WITH THE USERINPUT
+#HOW DO I DEAL WITH SQL INJECTION VULNERABILITY WITH THE USERINPUT 
 
  cursor = g.conn.execute("SELECT stage_name FROM artists WHERE stage_name = userInput")
  stage_name = []
@@ -314,13 +282,14 @@ cursor = g.conn.execute("SELECT role FROM artists WHERE stage_name = userInput")
 
 #------------------------------------------------------------------------------------------------
 #SEARCH SINGLES PAGE
+
 @app.route('/searchSingles/', methods=['GET','POST'])
-def searchSingles():
+def searchSingles():    
 
   if request.method == 'POST':
         userInput = request.form['title']
 
-#HOW DO I DEAL WITH SQL INJECTION VULNERABILITY WITH THE USERINPUT
+#HOW DO I DEAL WITH SQL INJECTION VULNERABILITY WITH THE USERINPUT 
 
 cursor = g.conn.execute("SELECT title FROM singles WHERE title = userInput")
  title = []
@@ -343,19 +312,18 @@ cursor = g.conn.execute("SELECT role FROM singles WHERE title = userInput")
    role.append(result['role'])
  cursor.close()
 
- context = {
+       context = {
           "title": title[0],
           "release_date": release_date[0],
           "genre": genre[0],
           "role": role[0],
        }
    return render_template("searchSinglesResults.html", **context)
-
 #------------------------------------------------------------------------------------------------
-#SEARCH GRAMMYS WON BY AN ARTIST
+#SEARCH GRAMMYS WON BY AN ARTIST 
 
 @app.route('/searchGrammy/', methods=['GET','POST'])
-def searchGrammy():
+def searchGrammy():   
 
   if request.method == 'POST':
         userInput = request.form['main_artist']
@@ -391,22 +359,22 @@ cursor = g.conn.execute("SELECT main_artist FROM awarded_to WHERE main_artist = 
 
 context = {
           "award": award[0],
-          "year": year[0],
+	  "year": year[0],
           "genre": genre[0],
           "release_date": release_date[0],
           "main_artist_": main_artist[0],
-        }
+	}
    return render_template("searchGrammyResults.html", **context)
 
 #------------------------------------------------------------------------------------------------
-#YOUR BOOKMARKED ARTISTS
+#YOUR BOOKMARKED ARTISTS 
 # how are we going to look it up -> they enter their username again? -> same goes for singles
 
 
 #------------------------------------------------------------------------------------------------
 #BOOKMARK AN ARTIST
 #they enter an artist and we look for them in the artists table and then join it with their table
-# or wtf are we doing with this -> the same for singles
+# or wtf are we doing with this -> the same for singles 
 
 #------------------------------------------------------------------------------------------------
 # YOUR BOOKMARKED SINGLES
@@ -414,6 +382,13 @@ context = {
 
 #------------------------------------------------------------------------------------------------
 #BOOKMARK A SINGLE
+
+#------------------------------------------------------------------------------------------------
+#RATINGS 
+
+
+#------------------------------------------------------------------------------------------------
+#REVIEWS
 
 
 #------------------------------------------------------------------------------------------------

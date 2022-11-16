@@ -80,7 +80,60 @@ def teardown_request(exception):
 
 #------------------------------------------------------------------------------------------------
 
+<<<<<<< HEAD:myserver.py
+#variable = userInput
+
+@app.route("/searchArtistsResults", methods = "POST", "GET"]})
+def searchArtistsResults():
+
+	if request.method  == "POST";
+
+
+cursor = g.conn.execute("SELECT stage_name FROM artists WHERE stage_name = userInput")
+  stage_name = []
+  for result in cursor:
+    stage_name.append(result['stage_name'])  # can also be accessed using result[0]
+
+cursor = g.conn.execute("SELECT birthday FROM artists WHERE stage_name = userInput")
+  birthday = []
+  for result in cursor:
+    birthday.append(result['birthday'])  
+
+cursor = g.conn.execute("SELECT real_name FROM artists WHERE stage_name = userInput")
+  real_name = []
+  for result in cursor:
+    real_name.append(result['real_name'])  
+
+cursor = g.conn.execute("SELECT year_started FROM artists WHERE stage_name = userInput")
+  year_started = []
+  for result in cursor:
+    year_started.append(result['year_started']) 
+
+cursor = g.conn.execute("SELECT years_active FROM artists WHERE stage_name = userInput")
+  years_active = []
+  for result in cursor:
+    years_active.append(result['years_active'])  
+
+cursor = g.conn.execute("SELECT genre FROM artists WHERE stage_name = userInput")
+  genre = []
+  for result in cursor:
+    genre.append(result['genre']) 
+
+cursor = g.conn.execute("SELECT role  FROM artists WHERE stage_name = userInput")
+  role = []
+  for result in cursor:
+    role.append(result['role'])  
+
+  cursor.close()
+
+	context = { 
+		"
+
+
+#------------------------------------------------------------------------------------------------
+=======
 #
+>>>>>>> e28b156ba507788eaf3a83d6976e06d178915c69:ethoghts.py
 # @app.route is a decorator around index() that means:
 #   run index() whenever the user tries to access the "/" path using a GET request
 #
