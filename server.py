@@ -272,13 +272,12 @@ def writereview():
 def searchArtists():
 
   if request.method == 'POST':
-        userInput = request.form.get['stage_name']
+        userInput = request.form['stagename']
 
-#HOW DO I DEAL WITH SQL INJECTION VULNERABILITY WITH THE USERINPUT
         cursor = g.conn.execute("SELECT stage_name FROM artists WHERE stage_name = %s", userInput)
-        stage_names = []
+        stagenames = []
         for result in cursor:
-          stage_names.append(result[0])  # can also be accessed using result[0]
+          stagenames.append(result[0])  # can also be accessed using result[0]
 
         cursor = g.conn.execute("SELECT birthday FROM artists WHERE stage_name = %s", userInput)
         birthdays = []
@@ -286,19 +285,19 @@ def searchArtists():
           birthdays.append(bdays[0])
 
         cursor = g.conn.execute("SELECT real_name FROM artists WHERE stage_name = %s", userInput)
-        real_name = []
+        realname = []
         for rn in cursor:
-          real_name.append(rn[0])
+          realname.append(rn[0])
 
         cursor = g.conn.execute("SELECT year_started FROM artists WHERE stage_name = %s", userInput)
-        year_started = []
+        yearstarted = []
         for ys in cursor:
-          year_started.append(ys[0])
+          yearstarted.append(ys[0])
 
         cursor = g.conn.execute("SELECT years_active FROM artists WHERE stage_name = %s", userInput)
-        years_active = []
+        yearsactive = []
         for ya in cursor:
-          years_active.append(ya[0])
+          yearsactive.append(ya[0])
 
         cursor = g.conn.execute("SELECT genre FROM artists WHERE stage_name = %s", userInput)
         genre = []
@@ -307,26 +306,27 @@ def searchArtists():
 
         cursor = g.conn.execute("SELECT role FROM artists WHERE stage_name = %s", userInput)
         role = []
-        for result in cursor:
-          role.append(result[0])
+        for r in cursor:
+          role.append(r[0])
 
         cursor.close()
 
         context = {
-          "stage_name": result[0],
-          "birthday": bdays[0],
-          "real_name": rn[0],
-          "year_started": ys[0],
-          "years_active": ya[0],
+          "stagenameis": result[0],
+          "birthdays": bdays[0],
+          "realname": rn[0],
+          "yearstarted": ys[0],
+          "yearsactive": ya[0],
           "genre": genres[0],
-          "role": result[0],
+          "role": r[0],
        }
         return render_template("searchArtistsResults.html", **context)
     
-  return render_template("searchArtistsResults.html", boolean = True)
+  return render_template("searchArtists.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 #SEARCH SINGLES PAGE
+
 @app.route('/searchSingles', methods=['GET','POST'])
 def searchSingles():
 
@@ -339,30 +339,36 @@ def searchSingles():
           title.append(result[0])
 
         cursor = g.conn.execute("SELECT release_date FROM singles WHERE title = %s", userInput)
-        release_date = []
+        releasedate = []
         for rd in cursor:
-          release_date.append(rd[0])
+          releasedate.append(rd[0])
+
+        cursor = g.conn.execute("SELECT main_artist FROM singles WHERE title = %s", userInput)
+        mainartist = []
+        for main in cursor:
+          mainartist.append(main[0])
 
         cursor = g.conn.execute("SELECT genre FROM singles WHERE title = %s", userInput)
         genre = []
         for gs in cursor:
-          genre.append(GetSetDescriptorType[0])
+          genre.append(gs[0])
 
-        cursor = g.conn.execute("SELECT role FROM singles WHERE title = %s", userInput)
-        role = []
-        for roles in cursor:
-          role.append(roles[0])
+        cursor = g.conn.execute("SELECT part_of_album FROM singles WHERE title = %s", userInput)
+        album = []
+        for a in cursor:
+          album.append(a[0])
         cursor.close()
 
         context = {
                   "title": result[0],
-                  "release_date": rd[0],
-                  "genre": gs[0],
-                  "role": roles[0],
+                  "releasedate": rd[0],
+                  "main": main[0],
+		  "genre": gs[0],
+                  "album": a[0],
               }
         return render_template("searchSinglesResults.html", **context)
 
-  return render_template("searchSinglesResults.html", boolean = True)
+  return render_template("searchSingles.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 #SEARCH GRAMMYS WON BY AN ARTIST
@@ -375,8 +381,6 @@ def searchGrammy():
         userInput = request.form['artist']
 
 #HOW DO I DEAL WITH SQL INJECTION VULNERABILITY WITH THE USERINPUT 
-
-
 
         cursor = g.conn.execute("SELECT award FROM awarded_to WHERE main_artist = userInput")
         award = []
@@ -414,7 +418,7 @@ def searchGrammy():
         }
         return render_template("searchGrammyResults.html", **context) 
 
-  return render_template("searchGrammyResults.html", **context)
+  return render_template("searchGrammy.html", **context)
         
 """
 
@@ -428,9 +432,12 @@ def searchGrammy():
 #they enter an artist and we look for them in the artists table and then join it with their table
 # or wtf are we doing with this -> the same for singles
 
+#enter an artist name then get the results from 
+
 #------------------------------------------------------------------------------------------------
 # YOUR BOOKMARKED SINGLES
-
+#they enter their username and it asks postgre for where the id matches userid in bookmars_singles
+#returns a table of their results 
 
 #------------------------------------------------------------------------------------------------
 #BOOKMARK A SINGLE
