@@ -34,28 +34,34 @@
     }
   </style>
   <body>
-    <h1>HOME</h1>
-    <div>
-      This is ur userid: {{data}}. Don't share this inforation with anyone
-    </div>
+    <h1 align="center">Write A Review</h1>
+    <form>
+      #content title name rating since
+      <div>
+        Enter Your Userid <br />
+        <input type="text" name="userid" placeholder="##" maxlength="20" />
+      </div>
 
-        <form action="/home" method="post">
-        <div>Want to see all your reviews? Enter Your Userid <br>
-            <input type="text" name="userid" placeholder="#"/><br>
-        </div><br>
-        <button type="submit">Submit</button>
+      <div>
+        Write your Review Here <br />
+        <textarea name="review" id="content" maxlength="500"></textarea>
+      </div>
+
+      <div>
+        Enter The title of the review <br />
+        <input type="text" name="title" placeholder="Title" maxlength="70" />
+      </div>
+      <br />
+      <div>
+        Enter you rating from 0-5 <br />
+        <input type="number" name="rating" min="0" max="5" />
+      </div>
+
+      <div align="center">
+        <button type="submit">Post Review</button>
+      </div>
     </form>
 
-    #printing the reviews
-    <div>
-      {%for n in r%}
-      <div>{{n}}</div>
-      {% endfor %}
-    </div>
-
-    <h2>See all artist</h2>
-    <h3>See all Grammy's</h3>
-
-    </form>
+    <p></p><a href="{{url_for('home')}}">go back to home page</a></p>
   </body>
 </html>

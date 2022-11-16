@@ -1,3 +1,4 @@
+
 """
 Columbia's COMS W4111.001 Introduction to Databases
 Example Webserver
@@ -7,37 +8,39 @@ Go to http://localhost:8111 in your browser.
 A debugger such as "pdb" may be helpful for debugging.
 Read about it online.
 """
-
 import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, url_for, redirect, Response
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
 
-
-
-
 #------------------------------------------------------------------------------------------------
 
-
-# The following is a URI that connects to your Part 2 database in order to use the data.
 #
-# XXX: The URI should be in the format of: postgresql://USER:PASSWORD@34.75.94.195/proj1part2
+# The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
+#
+# XXX: The URI should be in the format of:
+#
+#     postgresql://USER:PASSWORD@34.75.94.195/proj1part2
+#
+# For example, if you had username gravano and password foobar, then the following line would be:
+#
+#     DATABASEURI = "postgresql://gravano:foobar@34.75.94.195/proj1part2"
 #
 DATABASEURI = "postgresql://cg3236:4602@34.75.94.195/proj1part2"
-
-
-
+#
 # This line creates a database engine that knows how to connect to the URI above.
+#
 engine = create_engine(DATABASEURI)
-
 
 #------------------------------------------------------------------------------------------------
 
+
+#
 # Example of running queries in your database
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
@@ -50,14 +53,13 @@ engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'
 
 @app.before_request
 def before_request():
-
   """
   This function is run at the beginning of every web request
   (every time you enter an address in the web browser).
   We use it to setup a database connection that can be used throughout the request.
+
   The variable g is globally accessible.
   """
-
   try:
     g.conn = engine.connect()
   except:
@@ -67,23 +69,18 @@ def before_request():
 
 @app.teardown_request
 def teardown_request(exception):
-
-
   """
   At the end of the web request, this makes sure to close the database connection.
   If you don't, the database could run out of memory!
   """
-
-
   try:
     g.conn.close()
   except Exception as e:
     pass
 
-
 #------------------------------------------------------------------------------------------------
-#TRYING TO GET THE FLASK WITH THE SEARCH DIFFERENT ARTISTS PAGE 
 
+<<<<<<< HEAD:myserver.py
 #variable = userInput
 
 @app.route("/searchArtistsResults", methods = "POST", "GET"]})
@@ -134,6 +131,9 @@ cursor = g.conn.execute("SELECT role  FROM artists WHERE stage_name = userInput"
 
 
 #------------------------------------------------------------------------------------------------
+=======
+#
+>>>>>>> e28b156ba507788eaf3a83d6976e06d178915c69:ethoghts.py
 # @app.route is a decorator around index() that means:
 #   run index() whenever the user tries to access the "/" path using a GET request
 #
@@ -160,7 +160,6 @@ def index():
   """
 
 #------------------------------------------------------------------------------------------------
-
   # DEBUG: this is debugging code to see what request looks like
   print(request.args)
 
@@ -173,9 +172,9 @@ def index():
   for result in cursor:
     names.append(result['name'])  # can also be accessed using result[0]
   cursor.close()
-
 #------------------------------------------------------------------------------------------------
 
+  #
   # Flask uses Jinja templates, which is an extension to HTML where you can
   # pass data to a template and dynamically generate HTML based on the data
   # (you can think of it as simple PHP)
@@ -211,7 +210,6 @@ def index():
   return render_template("index.html", **context)
 
 #------------------------------------------------------------------------------------------------
-
 #
 # This is an example of a different path.  You can see it at:
 #
@@ -233,13 +231,78 @@ def add():
   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
   return redirect('/')
 
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+  #show them all of their reviews
+  if request.method == 'POST':
+    uid = request.form.get['userid']
+    cursor = g.conn.execute("SELECT content, title_name, rating, since FROM review WHERE uid = %s", uid)
+    #how is since going to be inserted???
+    reviews = []
+    for thesereviews in reviews:
+      reviews.appaend(thesereviews[0])
+    cursor.close()
+    review = dict(r = thesereviews)
+    return render_template("home.html", **review)
+  return render_template("home.html", boolean=True) 
 
-@app.route('/login')
+#signup page
+@app.route('/signup', methods=['GET','POST'])
+def signup():
+  if request.method == 'POST':
+    username = request.form.get['username']
+    login = request.form.get['login']
+    name = request.form.get['name']
+    email = request.form.get['email']
+    g.conn.execute('INSERT INTO users(username, login, name, email) VALUES (%s, %s, %s, %s)', username, login, name, email)
+    cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s, login=%s, name=%s, email = %s",username,login,name,email)
+    uids = []
+    for userids in cursor:
+      uids.append(userids[0]) 
+    cursor.close()
+    context = dict(data = userids)
+    return render_template("home.html", **context)
+
+  return render_template("signup.html", boolean=True)
+
+#------------------------------------------------------------------------------------------------
+#lOGIN PAGE 
+
+@app.route('/login/', methods=['GET','POST'])
 def login():
-    abort(401)
-    this_is_never_executed()
+  if request.method == 'POST':
+    userid = request.form.get['userid']
+    login = request.form.get['login']
+    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s, login = %s", userid,login)
+    users = []
+    for usersid in cursor:
+      users.append(users[0])
+      cursor.close()
+      context = dict(data = users)
+      if(len(users) != 0):
+        return render_template("home.html", **context)
+      else:
+        return render_template("login.html", boolean=True)
+      
+    return render_template("login.html", boolean=True)
+    #abort(401)
+    #this_is_never_executed()
 
+##CHECK WHAT WRIE-A TABLEIS ACTUALLY CALLED
+@app.route('/writereview', methods=['GET','POST'])
+def writereview():
+  if request.method == 'POST':
+    userid = request.form.get['userid']
+    content = request.form.get['review']
+    title = request.form.get['title']
+    rating =  request.form.get['rating']
+    g.conn.execute('INSERT INTO writes_a (uid, content, title, rating) VALUES (%s, %s, %s, %d)', userid, content, title, rating)
+    #automatically picks out rid? it's a primary key
+    #flash that their review has been received
 
+  return render_template("writereview.html", boolean = True)
+
+#------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
   import click
 
@@ -249,9 +312,6 @@ if __name__ == "__main__":
   @click.argument('HOST', default='0.0.0.0')
   @click.argument('PORT', default=8111, type=int)
   def run(debug, threaded, host, port):
-
-
-
     """
     This function handles command line parameters.
     Run the server using:
@@ -269,4 +329,3 @@ if __name__ == "__main__":
     app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
 
   run()
-
