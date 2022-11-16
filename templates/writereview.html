@@ -35,13 +35,8 @@
   </style>
   <body>
     <h1 align="center">Write A Review</h1>
-    <form>
+    <form method = "POST" action = /writereview>
       #content title name rating since
-      <div>
-        Enter Your Userid <br />
-        <input type="text" name="userid" placeholder="##" maxlength="20" />
-      </div>
-
       <div>
         Write your Review Here <br />
         <textarea name="review" id="content" maxlength="500"></textarea>
@@ -52,9 +47,22 @@
         <input type="text" name="title" placeholder="Title" maxlength="70" />
       </div>
       <br />
+
       <div>
         Enter you rating from 0-5 <br />
         <input type="number" name="rating" min="0" max="5" />
+      </div>
+
+      <div>
+        Enter today's date in the form 20xx-MM-DD <br />
+        <input type="date" id="since" name="trip-start"
+       value="2022-07-16"
+       min="1998-01-01" max="2050-12-31">
+      </div>
+
+      <div>
+        Enter Your Userid <br />
+        <input type="text" name="userid" placeholder="##" maxlength="20" />
       </div>
 
       <div align="center">

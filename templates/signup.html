@@ -33,23 +33,24 @@
   <body>
     <h1>Signup</h1>
     <h2>Please make sure all your information is accurate before submitting</h2>
-    <form action="/signup" method="post">
+    <form action="/signup" method="POST">
         <div>Enter Your UserName <br>
-            <input type="text" name="username" placeholder="JDRocks"/><br>
+            <input type="text" name="username" placeholder="JDRocks" maxlength="20"/><br>
         </div><br>
-        <div>Enter Your Login <br>
-            <input type="text" name="login" placeholder="Goodpaswrd"/><br>
+        <div>Enter Your Password <br>
+            <input type="text" name="login" placeholder="Goodpaswrd" maxlength="18"/><br>
         </div><br>
         <div>Enter Your Full Name<br>
-            <input type="text" name="name" placeholder="Jane Doe"/><br>
+            <input type="text" name="name" placeholder="Jane Doe" maxlength="60"/><br>
         </div><br>
         <div>Enter Your Email<br>
-            <input type="text" name="email" placeholder="JD@thisemail.com"/><br>
+            <input type="text" name="email" placeholder="JD@thisemail.com" maxlength="50"/><br>
         </div>
         <br>
         <button type="submit">Submit</button>
     </form>
 
-    <p></p><a href="{{url_for('login')}}">Already have an account?Login</a></p>
+
+    <p></p><a href="{{url_for('login')}}">Already have an account? Login</a></p>
   </body>
 </html>

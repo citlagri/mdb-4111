@@ -40,12 +40,12 @@
   <body>
     <h1>Login</h1>
     <h2>Please make sure all your information is accurate before submitting</h2>
-    <form action="/login" method="post">
+    <form action="/login" method="POST">
         <div>Enter Your Userid <br>
-            <input type="text" name="userid" placeholder="JDRocks"/><br>
+            <input type="text" name="userid" placeholder="JDRocks" maxlength="20"/><br>
         </div><br>
         <div>Enter Your Login <br>
-            <input type="text" name="login" placeholder="Goodpaswrd"/><br>
+            <input type="text" name="login" placeholder="Goodpaswrd" maxlength="18"/><br>
         </div><br>
         <button type="submit">Submit</button>
     </form>

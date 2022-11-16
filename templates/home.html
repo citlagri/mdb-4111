@@ -36,12 +36,12 @@
   <body>
     <h1>HOME</h1>
     <div>
-      This is ur userid: {{data}}. Don't share this inforation with anyone
+      This is ur userid: {{data}}. Don't share this information with anyone
     </div>
 
-        <form action="/home" method="post">
+    <form action="/home" method="POST">
         <div>Want to see all your reviews? Enter Your Userid <br>
-            <input type="text" name="userid" placeholder="#"/><br>
+            <input type="text" name="userid" placeholder="#" maxlength="20"/><br>
         </div><br>
         <button type="submit">Submit</button>
     </form>
