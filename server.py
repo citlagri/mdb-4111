@@ -12,8 +12,9 @@ import os
 from types import GetSetDescriptorType
   # accessible as a variable in index.html:
 from sqlalchemy import *
+from sqlalchemy import exc
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, url_for, redirect, Response
+from flask import Flask, request, render_template, g, flash, url_for, redirect, Response
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -218,21 +219,28 @@ def signup():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
-  if request.method == 'POST':
-    userid = request.form.get['userid']
-    login = request.form.get['login']
-    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s, login = %s", (userid, login))
-    users = []
-    for usersid in cursor:
-      users.append(users[0])
-      cursor.close()
-      context = dict(data = users)
-      if(len(users) != 0):
-        return render_template("home.html", **context)
-      else:
-        #have message that says you don't an account, create one please!
-        #try and error?_?_?_?
-        return render_template("login.html", boolean=True)
+  try:
+    if request.method == 'POST':
+      userid = request.form.get['userid']
+      login = request.form.get['login']
+      cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s, login = %s", (userid, login))
+      users = []
+      for usersid in cursor:
+        users.append(users[0])
+        cursor.close()
+        context = dict(data = users)
+        if(len(users) != 0):
+          return render_template("home.html", **context)
+        else:
+          #have message that says you don't an account, create one please!
+          #try and error?_?_?_?
+          return render_template("login.html", boolean=True)
+  except exc.SQLAlchemyError as e:
+    flash("unsuccessful login")
+    print(e)
+  except Exception as err:
+    flash("error occured")
+    print(err)
       
   return render_template("login.html", boolean=True)
     #abort(401)
