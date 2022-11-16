@@ -241,7 +241,6 @@ def login():
 
 #------------------------------------------------------------------------------------------------
 
-##CHECK WHAT WRIE-A TABLEIS ACTUALLY CALLED
 @app.route('/writereview', methods=['GET','POST'])
 def writereview():
   if request.method == 'POST':
@@ -315,7 +314,8 @@ def searchArtists():
           "role": result[0],
        }
         return render_template("searchArtistsResults.html", **context)
-
+    
+  return render_template("searchArtistsResults.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 #SEARCH SINGLES PAGE
@@ -353,6 +353,8 @@ def searchSingles():
                   "role": roles[0],
               }
         return render_template("searchSinglesResults.html", **context)
+
+  return render_template("searchSinglesResults.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 #SEARCH GRAMMYS WON BY AN ARTIST
@@ -403,6 +405,8 @@ def searchGrammy():
                     "main_artist_": main_artist[0],
         }
         return render_template("searchGrammyResults.html", **context) 
+
+  return render_template("searchGrammyResults.html", **context)
         
 """
 
