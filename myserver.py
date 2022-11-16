@@ -86,7 +86,7 @@ def teardown_request(exception):
 
 #variable = userInput
 
-@app.route("/searchArtistsResults/", methods = "POST", "GET"]})
+@app.route("/searchArtistsResults", methods = "POST", "GET"]})
 def searchArtistsResults():
 
 	if request.method  == "POST";
