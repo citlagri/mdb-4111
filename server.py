@@ -221,8 +221,8 @@ def signup():
 def login():
   try:
     if request.method == 'POST':
-      userid = request.form.get['userid']
-      login = request.form.get['login']
+      userid = request.form.get('userid')
+      login = request.form.get('login')
       cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s, login = %s", (userid, login))
       users = []
       for usersid in cursor:
