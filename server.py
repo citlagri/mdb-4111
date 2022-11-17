@@ -180,6 +180,10 @@ def add():
   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
   return redirect('/')
 
+
+#------------------------------------------------------------------------------------------------
+#ESME'S HOME PAGE 
+
 @app.route('/home', methods=['GET', 'POST'])
 def home():
   #show them all of their reviews
@@ -193,6 +197,14 @@ def home():
     review = dict(r = thesereviews)
     return render_template("home.html", **review)
   return render_template("home.html", boolean=True) 
+
+#------------------------------------------------------------------------------------------------
+#CIT'S HOME PAGE
+@app.route('/homepage', methods=['GET', 'POST'])
+def homepage():
+   return render_template("homepage.html", boolean=True)
+
+#------------------------------------------------------------------------------------------------
 
 #signup page
 @app.route('/signup', methods=['GET','POST'])
