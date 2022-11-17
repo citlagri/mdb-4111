@@ -404,8 +404,7 @@ def searchGrammy():
         mainartist = []
         for ma in cursor:
           mainartist.append(ma[0])
-
-	cursor.close()
+        cursor.close()
 
         context = {
                     "award": a[0],
@@ -453,7 +452,7 @@ def searchBookmarkedArtists():
         for ya in cursor:
           yearsactive.append(ya[0])
 
-	cursor = g.conn.execute("SELECT genre FROM artists NATURAL JOIN bookmarks_artist WHERE uid = %s", userInput)
+        cursor = g.conn.execute("SELECT genre FROM artists NATURAL JOIN bookmarks_artist WHERE uid = %s", userInput)
         genre = []
         for genres in cursor:
           genre.append(genres[0])
@@ -467,7 +466,6 @@ def searchBookmarkedArtists():
         sincedate = []
         for s in cursor:
           sincedate.append(s[0])
-
         cursor.close()
 
         context = {
@@ -531,8 +529,7 @@ def searchBookmarkedSingles():
         since = []
         for s in cursor:
           since.append(s[0])
-
-	cursor.close()
+        cursor.close()
 
         context = {
                   "title": result[0],
