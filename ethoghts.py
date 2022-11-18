@@ -12,8 +12,9 @@ import os
 from types import GetSetDescriptorType
   # accessible as a variable in index.html:
 from sqlalchemy import *
+from sqlalchemy import exc
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, url_for, redirect, Response
+from flask import Flask, request, render_template, g, flash, url_for, redirect, Response
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -202,7 +203,7 @@ def signup():
     name = request.form.get['name']
     email = request.form.get['email']
     g.conn.execute('INSERT INTO users(username, login, name, email) VALUES (%s, %s, %s, %s)', username, login, name, email)
-    cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s, login=%s, name=%s, email = %s", username, login, name, email)
+    cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s AND login=%s AND name=%s AND email = %s", username, login, name, email)
     ##HOW IS USERID BEING GENERATED?
     uids = []
     for userids in cursor:
@@ -218,37 +219,43 @@ def signup():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
-  if request.method == 'POST':
-    userid = request.form.get['userid']
-    login = request.form.get['login']
-    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s, login = %s", userid, login)
-    users = []
-    for usersid in cursor:
-      users.append(users[0])
-      cursor.close()
-      context = dict(data = users)
-      if(len(users) != 0):
-        return render_template("home.html", **context)
-      else:
-        #have message that says you don't an account, create one please!
-        #try and error?_?_?_?
-        return render_template("login.html", boolean=True)
+  try:
+    if request.method == 'POST':
+      userid = request.form.get('userid')
+      login = request.form.get('login')
+      cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s AND login = %s", (userid, login))
+      users = []
+      for usersid in cursor:
+        users.append(usersid)
+        cursor.close()
+        context = dict(data = users)
+        if(len(users) != 0):
+          return render_template("home.html", **context)
+        else:
+          #have message that says you don't an account, create one please!
+          #try and error?_?_?_?
+          return render_template("login.html", boolean=True)
+  except exc.SQLAlchemyError as e:
+    flash("unsuccessful login")
+    print(e)
+  except Exception as err:
+    flash("error occured")
+    print(err)
       
-    return render_template("login.html", boolean=True)
+  return render_template("login.html", boolean=True)
     #abort(401)
     #this_is_never_executed()
 
 
 #------------------------------------------------------------------------------------------------
 
-##CHECK WHAT WRIE-A TABLEIS ACTUALLY CALLED
 @app.route('/writereview', methods=['GET','POST'])
 def writereview():
   if request.method == 'POST':
     content = request.form.get['review']
     title = request.form.get['title']
     rating =  request.form.get['rating']
-    since = request.form.get['sinced']
+    since = request.form.get['since']
     userid = request.form.get['userid']
     g.conn.execute('INSERT INTO writes_a (content, title_name, rating, since, uid) VALUES (%s, %s, %d, %s, %s)', content, title, rating, since, userid)
     #don't know how to enter date
@@ -315,7 +322,8 @@ def searchArtists():
           "role": result[0],
        }
         return render_template("searchArtistsResults.html", **context)
-
+    
+  return render_template("searchArtistsResults.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 #SEARCH SINGLES PAGE
@@ -353,6 +361,8 @@ def searchSingles():
                   "role": roles[0],
               }
         return render_template("searchSinglesResults.html", **context)
+
+  return render_template("searchSinglesResults.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 #SEARCH GRAMMYS WON BY AN ARTIST
@@ -403,6 +413,8 @@ def searchGrammy():
                     "main_artist_": main_artist[0],
         }
         return render_template("searchGrammyResults.html", **context) 
+
+  return render_template("searchGrammyResults.html", **context)
         
 """
 
@@ -448,6 +460,7 @@ if __name__ == "__main__":
 
     HOST, PORT = host, port
     print("running on %s:%d" % (HOST, PORT))
-    app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
+    app.run(host=HOST, port=PORT, threaded=threaded)
+    app.debug = debug
 
   run()
