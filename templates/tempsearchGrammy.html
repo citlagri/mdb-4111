@@ -31,7 +31,7 @@
       padding: 10px;
       border-radius: 15px;
     }
-    button:hover {
+  button:hover {
       background: white;
       color: #59c1bd;
       cursor: pointer;
@@ -41,19 +41,30 @@
   <body>
     <h1>Search the Artist to see what Grammy they won</h1>
 
-    <form method="POST" action="/searchGrammy">
-      <div>
-        Look up an artist and see what Grammy they won <br />
-      </div>
-      <div></div>
-        <input type="text" name="artist" maxlength="60" />
-        <button type="submit">Search</button>
-      </div>
+    <!--<form method="POST" action="/searchGrammy">-->
+    <div>Look up an artist and see what Grammy they won<br /></div>
+    <form action="/searchGrammy" method="POST">
+      <select name="artists">
+        <option value="Bad Bunny">Bad Bunny</option>
+        <option value="Louis Armstrong">Louis Armstrong</option>
+        <option value="Beyonce">Beyonce</option>
+        <option value="Quincy Jones">Quincy Jones</option>
+        <option value="Lady Gaga">Lady Gaga</option>
+        <option value="Calvin Harris">Calvin Harris</option>
+        <option value="Irving Berlin">Irving Berlin</option>
+        <option value="Ariana Grande">Ariana Grande</option>
+        <option value="Lin-Manuel Miranda">Lin-Manuel Miranda</option>
+        <option value="Dr. Dre">Dr. Dre</option>
+      </select>
+      <button type="submit">Submit</button>
     </form>
 
-
+    <!--<div>
+      <input type="text" name="artist" maxlength="60" />
+      <button type="submit">Search</button>
+    </div>-->
+    <!--</form>-->
 
     <p><a href="/homepage">homepage</a></p>
-    <p><a href="/searchGrammy">search another artist's grammys</a></p>
   </body>
 </html>

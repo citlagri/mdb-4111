@@ -392,27 +392,27 @@ def searchGrammy():
   if request.method == 'POST':
         userInput = request.form['artist']
 
-        cursor = g.conn.execute("SELECT award FROM awarded_to WHERE main_artist = userInput")
+        cursor = g.conn.execute("SELECT award FROM awarded_to WHERE main_artist = %s", userInput)
         award = []
         for a in cursor:
           award.append(a[0])
 
-        cursor = g.conn.execute("SELECT year FROM awarded_to WHERE main_artist = userInput")
+        cursor = g.conn.execute("SELECT year FROM awarded_to WHERE main_artist = %s", userInput)
         year = []
         for y in cursor:
           year.append(y[0])
 
-        cursor = g.conn.execute("SELECT genre FROM awarded_to WHERE main_artist = userInput")
+        cursor = g.conn.execute("SELECT genre FROM awarded_to WHERE main_artist = %s", userInput)
         genre = []
         for g in cursor:
           genre.append(g[0])
 
-        cursor = g.conn.execute("SELECT release_date FROM awarded_to WHERE main_artist = userInput")
+        cursor = g.conn.execute("SELECT release_date FROM awarded_to WHERE main_artist = %s", userInput)
         releasedate = []
         for rd in cursor:
           releasedate.append(rd[0])
 
-        cursor = g.conn.execute("SELECT main_artist FROM awarded_to WHERE main_artist = userInput")
+        cursor = g.conn.execute("SELECT main_artist FROM awarded_to WHERE main_artist = %s", userInput)
         mainartist = []
         for ma in cursor:
           mainartist.append(ma[0])
@@ -427,11 +427,10 @@ def searchGrammy():
         }
         return render_template("searchGrammyResults.html", **context)
 
-  return render_template("searchGrammy.html", **context)
+  return render_template("searchGrammy.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 #YOUR BOOKMARKED ARTISTS
-# how are we going to look it up -> they enter their username again? -> same goes for singles
 
 @app.route('/searchBookmarkedArtists', methods=['GET','POST'])
 def searchBookmarkedArtists():
