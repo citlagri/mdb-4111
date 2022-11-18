@@ -6,11 +6,32 @@
     <th>Release Date</th>
     <th>Main Artist</th>
   </tr>
+
   <tr>
-    <td>{{award}}</td>
-    <td>{{year}}</td>
-    <td>{{genre}}</td>
-    <td>{{releasedate}}</td>
-    <td>{{mainartist}}</td>
+    <td>
+      {%for n in award%}
+      <div>{{n}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for y in year%}
+      <div>{{y}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for t in title%}
+      <div>{{t}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for d in releasedate%}
+      <div>{{d}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for m in mainartist%}
+      <div>{{m}}</div>
+      {% endfor %}
+    </td>
   </tr>
 </table>

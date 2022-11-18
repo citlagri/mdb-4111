@@ -390,42 +390,42 @@ def searchSingles():
 def searchGrammy():
 
   if request.method == 'POST':
-        userInput = request.form['artist']
+    userInput = request.form['artist']
 
-        cursor = g.conn.execute("SELECT award FROM awarded_to WHERE main_artist = %s", userInput)
-        award = []
-        for a in cursor:
-          award.append(a[0])
+    cursor = g.conn.execute("SELECT award FROM awarded_to WHERE main_artist = %s", userInput)
+    award = []
+    for a in cursor:
+      award.append(a[0])
 
-        cursor = g.conn.execute("SELECT year FROM awarded_to WHERE main_artist = %s", userInput)
-        year = []
-        for y in cursor:
-          year.append(y[0])
+    cursor = g.conn.execute("SELECT year FROM awarded_to WHERE main_artist = %s", userInput)
+    year = []
+    for y in cursor:
+      year.append(y[0])
 
-        cursor = g.conn.execute("SELECT genre FROM awarded_to WHERE main_artist = %s", userInput)
-        genre = []
-        for g in cursor:
-          genre.append(g[0])
+    cursor = g.conn.execute("SELECT release_date FROM awarded_to WHERE main_artist = %s", userInput)
+    releasedate = []
+    for rd in cursor:
+      releasedate.append(rd[0])
 
-        cursor = g.conn.execute("SELECT release_date FROM awarded_to WHERE main_artist = %s", userInput)
-        releasedate = []
-        for rd in cursor:
-          releasedate.append(rd[0])
+    cursor = g.conn.execute("SELECT title FROM awarded_to WHERE main_artist = %s", userInput)
+    title = []
+    for ma in cursor:
+      title.append(ma[0])
 
-        cursor = g.conn.execute("SELECT main_artist FROM awarded_to WHERE main_artist = %s", userInput)
-        mainartist = []
-        for ma in cursor:
-          mainartist.append(ma[0])
-        cursor.close()
+    cursor = g.conn.execute("SELECT main_artist FROM awarded_to WHERE main_artist = %s", userInput)
+    mainartist = []
+    for ma in cursor:
+      mainartist.append(ma[0])
+    cursor.close()
 
-        context = {
-                    "award": a[0],
-                    "year": y[0],
-                    "genre": g[0],
-                    "releasedate": rd[0],
-                    "mainartist": ma[0],
-        }
-        return render_template("searchGrammyResults.html", **context)
+    context = {
+                "award": award,
+                "year": year,
+                "title": title,
+                "releasedate": releasedate,
+                "mainartist": mainartist,
+    }
+    return render_template("searchGrammyResults.html", **context)
 
   return render_template("searchGrammy.html", boolean = True)
 

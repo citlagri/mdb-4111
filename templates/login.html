@@ -40,6 +40,8 @@
   <body>
     <h1>Login</h1>
     <h2>Please make sure all your information is accurate before submitting</h2>
+
+
     <form action="/login" method="POST">
         <div>Enter Your Userid <br>
             <input type="text" name="userid" placeholder="JDRocks" maxlength="20"/><br>
@@ -49,6 +51,14 @@
         </div><br>
         <button type="submit">Submit</button>
     </form>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      {% block body %}{% endblock %}
     <p></p><a href="{{url_for('signup')}}">Sign up if you don't have an account</a></p>
   </body>
 </html>

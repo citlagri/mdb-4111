@@ -46,12 +46,46 @@
         <button type="submit">Submit</button>
     </form>
 
-    #printing the reviews
     <div>
-      {%for n in r%}
+      {%for n in review%}
       <div>{{n}}</div>
       {% endfor %}
     </div>
+
+    <table>
+  <tr>
+    <th>Content</th>
+    <th>Title Name</th>
+    <th>Ratiing</th>
+    <th>Since</th>
+  </tr>
+
+  <tr>
+    <td>      
+      {%for n in c%}
+        <div>{{n}}</div>
+      {% endfor %}
+
+    </td>
+    <td>      
+      {%for n in tm%}
+        <div>{{n}}</div>
+      {% endfor %}
+
+    </td>
+    <td>      
+      {%for n in rating%}
+       <div>{{n}}</div>
+      {% endfor %}
+    </td>
+    <td>      
+      {%for n in since%}
+       <div>{{n}}</div>
+      {% endfor %}
+
+    </td>
+  </tr> 
+</table>
 
     <h2>See all artist</h2>
     <h3>See all Grammy's</h3>
