@@ -286,37 +286,37 @@ def searchArtists():
   if request.method == 'POST':
         userInput = request.form['stagename']
 
-        cursor = g.conn.execute("SELECT stage_name FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT stage_name FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         stagenames = []
         for result in cursor:
           stagenames.append(result[0])  # can also be accessed using result[0]
 
-        cursor = g.conn.execute("SELECT birthday FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT birthday FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         birthdays = []
         for bdays in cursor:
           birthdays.append(bdays[0])
 
-        cursor = g.conn.execute("SELECT real_name FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT real_name FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         realname = []
         for rn in cursor:
           realname.append(rn[0])
 
-        cursor = g.conn.execute("SELECT year_started FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT year_started FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         yearstarted = []
         for ys in cursor:
           yearstarted.append(ys[0])
 
-        cursor = g.conn.execute("SELECT years_active FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT years_active FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         yearsactive = []
         for ya in cursor:
           yearsactive.append(ya[0])
 
-        cursor = g.conn.execute("SELECT genre FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT genre FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         genre = []
         for genres in cursor:
           genre.append(genres[0])
 
-        cursor = g.conn.execute("SELECT role FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT role FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         role = []
         for r in cursor:
           role.append(r[0])
@@ -345,27 +345,27 @@ def searchSingles():
   if request.method == 'POST':
         userInput = request.form['title']
 
-        cursor = g.conn.execute("SELECT title FROM singles WHERE title = %s", userInput)
+        cursor = g.conn.execute("SELECT title FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
         title = []
         for result in cursor:
           title.append(result[0])
 
-        cursor = g.conn.execute("SELECT release_date FROM singles WHERE title = %s", userInput)
+        cursor = g.conn.execute("SELECT release_date FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
         releasedate = []
         for rd in cursor:
           releasedate.append(rd[0])
 
-        cursor = g.conn.execute("SELECT main_artist FROM singles WHERE title = %s", userInput)
+        cursor = g.conn.execute("SELECT main_artist FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
         mainartist = []
         for main in cursor:
           mainartist.append(main[0])
 
-        cursor = g.conn.execute("SELECT genre FROM singles WHERE title = %s", userInput)
+        cursor = g.conn.execute("SELECT genre FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
         genre = []
         for gs in cursor:
           genre.append(gs[0])
 
-        cursor = g.conn.execute("SELECT part_of_album FROM singles WHERE title = %s", userInput)
+        cursor = g.conn.execute("SELECT part_of_album FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
         album = []
         for a in cursor:
           album.append(a[0])
@@ -392,27 +392,27 @@ def searchGrammy():
   if request.method == 'POST':
     userInput = request.form['artist']
 
-    cursor = g.conn.execute("SELECT award FROM awarded_to WHERE main_artist = %s", userInput)
+    cursor = g.conn.execute("SELECT award FROM awarded_to WHERE LOWER(main_artist) = LOWER(%s)", userInput)
     award = []
     for a in cursor:
       award.append(a[0])
 
-    cursor = g.conn.execute("SELECT year FROM awarded_to WHERE main_artist = %s", userInput)
+    cursor = g.conn.execute("SELECT year FROM awarded_to WHERE LOWER(main_artist) = LOWER(%s)", userInput)
     year = []
     for y in cursor:
       year.append(y[0])
 
-    cursor = g.conn.execute("SELECT release_date FROM awarded_to WHERE main_artist = %s", userInput)
+    cursor = g.conn.execute("SELECT release_date FROM awarded_to WHERE LOWER(main_artist) = LOWER(%s)", userInput)
     releasedate = []
     for rd in cursor:
       releasedate.append(rd[0])
 
-    cursor = g.conn.execute("SELECT title FROM awarded_to WHERE main_artist = %s", userInput)
+    cursor = g.conn.execute("SELECT title FROM awarded_to WHERE LOWER(main_artist) = LOWER(%s)", userInput)
     title = []
     for ma in cursor:
       title.append(ma[0])
 
-    cursor = g.conn.execute("SELECT main_artist FROM awarded_to WHERE main_artist = %s", userInput)
+    cursor = g.conn.execute("SELECT main_artist FROM awarded_to WHERE LOWER(main_artist) = LOWER(%s)", userInput)
     mainartist = []
     for ma in cursor:
       mainartist.append(ma[0])
@@ -480,14 +480,14 @@ def searchBookmarkedArtists():
         cursor.close()
 
         context = {
-          "stagenameis": result[0],
-          "birthdays": bdays[0],
-          "realname": rn[0],
-          "yearstarted": ys[0],
-          "yearsactive": ya[0],
-          "genre": genres[0],
-          "role": r[0],
-          "since": s[0],
+          "stagenameis": stagenames,
+          "birthdays": birthdays,
+          "realname": realname,
+          "yearstarted": yearstarted,
+          "yearsactive": yearsactive,
+          "genre": genre,
+          "role": role,
+          "since": sincedate,
        }
         return render_template("searchBookmarkedArtistsResults.html", **context)
 
