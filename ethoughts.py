@@ -198,24 +198,35 @@ def home():
     tm = []
     for tms in cursor:
       tm.append(tms[0])
+    print(tm)
 
     cursor = g.conn.execute("SELECT rating FROM writes_a WHERE uid = %s", uid)
     rating = []
+    #rating = cursor.fetchall()
     for rn in cursor:
       rating.append(rn[0])
+    print(rating)
 
     cursor = g.conn.execute("SELECT since FROM writes_a WHERE uid = %s", uid)
     since = []
     for s in cursor:
       since.append(s[0]) 
     cursor.close()
-    review = {
-              "content": c[0],
-              "titlename": tm[0],
-              "rating": rating[0],
-              "since": since[0],
-              }
-    return render_template("home.html", **review)
+
+    infos = dict()
+    infos['content'] = c
+    infos['titlename'] = tm
+    infos['rating'] = rating 
+    infos['since'] = since
+
+    #review = {
+              #"content": c[0],
+              #"titlename": tm[0],
+              #"rating": rating[0],
+              #"since": since[0],
+              #}
+    #**infos
+    return render_template("home.html", infos=infos)
 
   return render_template("home.html", boolean=True) 
 
@@ -231,12 +242,12 @@ def homepage():
 @app.route('/signup', methods=['GET','POST'])
 def signup():
   if request.method == 'POST':
-    username = request.form.get['username']
-    login = request.form.get['login']
-    name = request.form.get['name']
-    email = request.form.get['email']
-    g.conn.execute('INSERT INTO users(username, login, name, email) VALUES (%s, %s, %s, %s)', username, login, name, email)
-    cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s AND login=%s AND name=%s AND email = %s", username, login, name, email)
+    username = request.form.get('username')
+    login = request.form.get('login')
+    name = request.form.get('name')
+    email = request.form.get('email')
+    g.conn.execute('INSERT INTO users(username, login, name, email) VALUES (%s, %s, %s, %s)', (username, login, name, email))
+    cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s AND login=%s AND name=%s AND email = %s", (username, login, name, email))
     ##HOW IS USERID BEING GENERATED?
     uids = []
     for userids in cursor:
@@ -287,12 +298,12 @@ def login():
 @app.route('/writereview', methods=['GET','POST'])
 def writereview():
   if request.method == 'POST':
-    content = request.form.get['review']
-    title = request.form.get['title']
-    rating =  request.form.get['rating']
-    since = request.form.get['since']
-    userid = request.form.get['userid']
-    g.conn.execute('INSERT INTO writes_a (content, title_name, rating, since, uid) VALUES (%s, %s, %d, %s, %s)', content, title, rating, since, userid)
+    content = request.form.get('review')
+    title = request.form.get('title')
+    rating =  request.form.get('rating')
+    since = request.form.get('since')
+    userid = request.form.get('userid')
+    g.conn.execute('INSERT INTO writes_a (content, title_name, rating, since, uid) VALUES (%s, %s, %s, %s, %s)', (content, title, rating, since, userid))
     #don't know how to enter date
     #automatically picks out rid? it's a primary key
     #flash that their review has been received
@@ -513,6 +524,7 @@ def searchBookmarkedArtists():
           "role": r[0],
           "since": s[0],
        }
+       
         return render_template("searchBookmarkedArtistsResults.html", **context)
 
   return render_template("searchBookmarkedArtists.html", boolean = True)
