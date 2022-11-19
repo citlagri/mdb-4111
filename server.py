@@ -188,15 +188,50 @@ def add():
 def home():
   #show them all of their reviews
   if request.method == 'POST':
-    uid = request.form.get['userid']
-    cursor = g.conn.execute("SELECT content, title_name, rating, since FROM writes_a WHERE uid = %s", uid)
-    reviews = []
-    for thesereviews in reviews:
-      reviews.appaend(thesereviews[0])
+    uid = request.form.get('userid')
+
+    cursor = g.conn.execute("SELECT content FROM writes_a WHERE uid = %s", uid)
+    c = []
+    for result in cursor:
+      c.append(result)  # can also be accessed using result[0]
+    print(c)#error checking
+
+    cursor = g.conn.execute("SELECT title_name FROM writes_a WHERE uid = %s", uid)
+    tm = []
+    for tms in cursor:
+      tm.append(tms)
+    print(tm)
+
+    cursor = g.conn.execute("SELECT rating FROM writes_a WHERE uid = %s", uid)
+    rating = []
+    #rating = cursor.fetchall()
+    for rn in cursor:
+      rating.append(rn)
+    print(rating)
+
+    cursor = g.conn.execute("SELECT since FROM writes_a WHERE uid = %s", uid)
+    since = []
+    for s in cursor:
+      since.append(s) 
+    print(since)
     cursor.close()
-    review = dict(r = thesereviews)
-    return render_template("home.html", **review)
-  return render_template("home.html", boolean=True) 
+
+    infos = dict()
+    infos['content'] = c
+    infos['titlename'] = tm
+    infos['rating'] = rating 
+    infos['since'] = since
+
+    #review = {
+              #"content": c[0],
+              #"titlename": tm[0],
+              #"rating": rating[0],
+              #"since": since[0],
+              #}
+    #**infos
+    return render_template("home.html", infos=infos)
+
+  return render_template("home.html", boolean=True)  
 
 #------------------------------------------------------------------------------------------------
 #CIT'S HOME PAGE
@@ -209,20 +244,28 @@ def homepage():
 #signup page
 @app.route('/signup', methods=['GET','POST'])
 def signup():
-  if request.method == 'POST':
-    username = request.form.get['username']
-    login = request.form.get['login']
-    name = request.form.get['name']
-    email = request.form.get['email']
-    g.conn.execute('INSERT INTO users(username, login, name, email) VALUES (%s, %s, %s, %s)', username, login, name, email)
-    cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s AND login=%s AND name=%s AND email = %s", username, login, name, email)
-    ##HOW IS USERID BEING GENERATED?
-    uids = []
-    for userids in cursor:
-      uids.append(userids[0]) 
-    cursor.close()
-    context = dict(data = userids)
-    return render_template("home.html", **context)
+  try:
+    if request.method == 'POST':
+      userid = request.form.get('userid')
+      username = request.form.get('username')
+      login = request.form.get('login')
+      name = request.form.get('name')
+      email = request.form.get('email')
+      g.conn.execute('INSERT INTO users(uid, username, login, name, email) VALUES (%s, %s, %s, %s, %s)', (userid, username, login, name, email))
+      cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s AND login=%s AND name=%s AND email = %s", (username, login, name, email))
+      ##HOW IS USERID BEING GENERATED?
+      uids = []
+      for userids in cursor:
+        uids.append(userids[0]) 
+      cursor.close()
+      context = dict(data = userids)
+      return render_template("home.html", **context)
+  except exc.SQLAlchemyError as e:
+    flash("unsuccessful signup")
+    print(e)
+  except Exception as err:
+    flash("error occured")
+    print(err)
 
   return render_template("signup.html", boolean=True)
 

@@ -32,8 +32,19 @@
   </style>
   <body>
     <h1>Signup</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     <h2>Please make sure all your information is accurate before submitting</h2>
     <form action="/signup" method="POST">
+        <div>Enter a userid. Remeber not to share this with anyone<br>
+            <input type="text" name="userid" placeholder="123sy" maxlength="20"/><br>
+        </div>
+        <br>
         <div>Enter Your UserName <br>
             <input type="text" name="username" placeholder="JDRocks" maxlength="20"/><br>
         </div><br>
