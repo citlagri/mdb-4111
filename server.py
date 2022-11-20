@@ -198,9 +198,8 @@ def home():
     infos = list()
     for review in reviews:
       infos.append(generator(labels, review))
-
-    #creastes the key values pairs for a certain key?
-    print(infos)
+   
+    #print(infos) #madde for debugging
     return render_template("home.html", infos=infos)
 #except exc.SQLAlchemyError as e:
   #flash("unsuccessful login")
@@ -221,28 +220,35 @@ def homepage():
 #signup page
 @app.route('/signup', methods=['GET','POST'])
 def signup():
-  try:
-    if request.method == 'POST':
-      userid = request.form.get('userid')
-      username = request.form.get('username')
-      login = request.form.get('login')
-      name = request.form.get('name')
-      email = request.form.get('email')
+  #try:
+  if request.method == 'POST':
+    userid = request.form.get('userid')
+    username = request.form.get('username')
+    login = request.form.get('login')
+    name = request.form.get('name')
+    email = request.form.get('email')
+    #check first that this user doesnt exist already with their userid
+    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s ", userid)
+    tuples = cursor.rowcount
+    cursor.close
+    print( tuples)
+    if(tuples >= 0):
+      return render_template("signup.html", boolean = True)
+    else:
       g.conn.execute('INSERT INTO users(uid, username, login, name, email) VALUES (%s, %s, %s, %s, %s)', (userid, username, login, name, email))
       cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s AND login=%s AND name=%s AND email = %s", (username, login, name, email))
-      ##HOW IS USERID BEING GENERATED?
       uids = []
       for userids in cursor:
         uids.append(userids[0]) 
       cursor.close()
       context = dict(data = userids)
       return render_template("home.html", **context)
-  except exc.SQLAlchemyError as e:
-    flash("unsuccessful signup")
-    print(e)
-  except Exception as err:
-    flash("error occured")
-    print(err)
+  #except exc.SQLAlchemyError as e:
+   # flash("unsuccessful signup")
+   # print(e)
+  #except Exception as err:
+   # flash("error occured")
+   # print(err)
 
   return render_template("signup.html", boolean=True)
 
