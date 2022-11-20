@@ -46,7 +46,7 @@
     {% endfor %} {% endif %} {% endwith %}
 
     <div>
-      This is ur userid: {{data}}. Don't share this information with anyone
+      This is your userid: {{data}}. Don't share this information with anyone
     </div>
 
     <form action="/home" method="POST">
@@ -64,6 +64,7 @@
         <th>Title Name</th>
         <th>Rating</th>
         <th>Since</th>
+        <th>Single Title</th>
       </thead>
       <tbody>
         {% for info in infos %}
@@ -72,47 +73,14 @@
           <td>{{info['titlename']}}</td>
           <td>{{info['rating']}}</td>
           <td>{{info['since']}}</td>
+          <td>{{info['title']}}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
 
-    <!---
-  <tr>
-    <td>      
-      {%for n in c%}
-        {{n}}
-      {% endfor %}
+    <!-- -->
+    <p></p><a href="{{url_for('writereview')}}">Want to write a review? Click Here</a></p>
 
-    </td>
-    <td>      
-      {%for n in tm%}
-        {{n}}
-      {% endfor %}
-
-    </td>
-    <td> 
-      {{rating}}
-           
-      {%for n in rating%}
-       {{n}}
-      {% endfor %} 
-    </td>
-    <td>      
-      {%for n in since%}
-       {{n}}
-      {% endfor %}
-
-    </td>
-  </tr> 
-</table>
-
-    <h2>See all artist</h2>
-    <h3>See all Grammy's</h3>
-
-    </form>
-  </body>
-</html>
-    -->
   </body>
 </html>
