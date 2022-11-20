@@ -616,8 +616,8 @@ def searchBookmarkedSingles():
 #------------------------------------------------------------------------------------------------
 #BOOKMARK A SINGLE
 
-@app.route('/addBookmarkSingles', methods=['GET','POST'])
-def addBookmarkSingles():
+@app.route('/addBookmarkSingle', methods=['GET','POST'])
+def addBookmarkSingle():
     if request.method == 'POST':
       userid = request.form.get('userid')
       artist = request.form.get('single')
@@ -642,7 +642,7 @@ def addBookmarkSingles():
 
       g.conn.execute('INSERT INTO bookmarks_single(uid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s)', (userid, title[0], releasedate[0], mainartist[0], since))
 
-    return render_template("addBookmarkSingles.html", boolean=True)
+    return render_template("addBookmarkSingle.html", boolean=True)
 
 
 #------------------------------------------------------------------------------------------------
