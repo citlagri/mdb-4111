@@ -183,54 +183,31 @@ def add():
 
 #------------------------------------------------------------------------------------------------
 #ESME'S HOME PAGE 
+def generator(keys, record):
+  return {key:record for key, record in zip(keys, record)}
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
-  #show them all of their reviews
+  #try:
+    #show them all of their reviews
   if request.method == 'POST':
     uid = request.form.get('userid')
+    labels = ['content','titlename','rating', 'since']
+    cursor = g.conn.execute("SELECT content, title_name, rating, since  FROM writes_a WHERE uid = %s", uid)
+    reviews = cursor.fetchall() #has all tupeless
+    infos = list()
+    for review in reviews:
+      infos.append(generator(labels, review))
 
-    cursor = g.conn.execute("SELECT content FROM writes_a WHERE uid = %s", uid)
-    c = []
-    for result in cursor:
-      c.append(result)  # can also be accessed using result[0]
-    print(c)#error checking
-
-    cursor = g.conn.execute("SELECT title_name FROM writes_a WHERE uid = %s", uid)
-    tm = []
-    for tms in cursor:
-      tm.append(tms)
-    print(tm)
-
-    cursor = g.conn.execute("SELECT rating FROM writes_a WHERE uid = %s", uid)
-    rating = []
-    #rating = cursor.fetchall()
-    for rn in cursor:
-      rating.append(rn)
-    print(rating)
-
-    cursor = g.conn.execute("SELECT since FROM writes_a WHERE uid = %s", uid)
-    since = []
-    for s in cursor:
-      since.append(s) 
-    print(since)
-    cursor.close()
-
-    infos = dict()
-    infos['content'] = c
-    infos['titlename'] = tm
-    infos['rating'] = rating 
-    infos['since'] = since
-
-    #review = {
-              #"content": c[0],
-              #"titlename": tm[0],
-              #"rating": rating[0],
-              #"since": since[0],
-              #}
-    #**infos
+    #creastes the key values pairs for a certain key?
+    print(infos)
     return render_template("home.html", infos=infos)
-
+#except exc.SQLAlchemyError as e:
+  #flash("unsuccessful login")
+  #print(e)
+#except Exception as err:
+  #flash("error occured")
+  #print(err)
   return render_template("home.html", boolean=True)  
 
 #------------------------------------------------------------------------------------------------
