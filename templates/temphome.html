@@ -34,7 +34,7 @@
     }
   </style>
   <body>
-    <h1>HOME</h1>
+  <h1>HOME</h1>
     <div>
       This is ur userid: {{data}}. Don't share this information with anyone
     </div>
@@ -47,7 +47,7 @@
     </form>
 
 
-<table>
+ <table>
   <tr>
     <th>Content</th>
     <th>Title Name</th>
@@ -56,69 +56,34 @@
   </tr>
 
 <div> these are your reviews:
-<div>   {{reviews}}
- </table>
-
-    </form>
-  </body>
-</html>
-
-
-   <!--<div>
-      {%for n in infos%}
-      <div>{{n}}</div>
-      {% endfor %}
-    </div>--> 
-
-    <table>
-      <thead>
-        <th>Content</th>
-        <th>Title Name</th>
-        <th>Rating</th>
-        <th>Since</th>
-      </thead>
-      <tbody>
-        {% for info in infos %}
-        <tr> hello
-          <td>{{info['content']}}</td>
-          <td>{{info['titlename']}}</td>
-          <td>{{info['rating']}}</td>
-          <td>{{info['since']}}</td>     
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-
-<!---
+        {{reviews}}
+</div>
   <tr>
-    <td>      
+    <td>
       {%for n in c%}
-        {{n}}
+        <div>{{n}}</div>
       {% endfor %}
 
     </td>
-    <td>      
+    <td>
       {%for n in tm%}
-        {{n}}
+        <div>{{n}}</div>
       {% endfor %}
 
     </td>
-    <td> 
-      {{rating}}
-           
+    <td>
       {%for n in rating%}
-       {{n}}
-      {% endfor %} 
+       <div>{{n}}</div>
+      {% endfor %}
     </td>
-    <td>      
+    <td>
       {%for n in since%}
-       {{n}}
+       <div>{{n}}</div>
       {% endfor %}
 
     </td>
-  </tr> 
-</table>
+  </tr>
+  </table>
 
     <h2>See all artist</h2>
     <h3>See all Grammy's</h3>
@@ -126,4 +91,4 @@
     </form>
   </body>
 </html>
-    -->
+

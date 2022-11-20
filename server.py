@@ -229,8 +229,9 @@ def home():
               #"since": since[0],
               #}
     #**infos
-    return render_template("home.html", infos=infos)
+    con = dict(reviews = infos)
 
+    return render_template("home.html", **con)
   return render_template("home.html", boolean=True)  
 
 #------------------------------------------------------------------------------------------------
@@ -327,7 +328,7 @@ def writereview():
 def searchArtists():
 
   if request.method == 'POST':
-        userInput = request.form['stagename']
+        userInput = request.form.get('stagename')
 
         cursor = g.conn.execute("SELECT stage_name FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         stagenames = []
@@ -538,10 +539,24 @@ def searchBookmarkedArtists():
 
 #------------------------------------------------------------------------------------------------
 #BOOKMARK AN ARTIST
-#they enter an artist and we look for them in the artists table and then join it with their table
-# or wtf are we doing with this -> the same for singles
 
-#enter an artist name then get the results from 
+@app.route('/addBookmarkArtist', methods=['GET','POST'])
+def addBookmarkArtist():
+    if request.method == 'POST':
+      userid = request.form.get('userid')
+      artist = request.form.get('artist')
+      since = request.form.get['since']
+
+      cursor = g.conn.execute("SELECT artist_id FROM artist WHERE LOWER(main_artist) = LOWER(%s)", userInput)
+      mainartist = []
+      for ma in cursor:
+        mainartist.append(ma[0])
+      cursor.close()
+
+      g.conn.execute('INSERT INTO bookmarks_artist(uid, artist_id, since) VALUES (%s, %s, %s)', (userid, mainartist[0], since))
+
+    return render_template("addBookmarkArtist.html", boolean=True)
+
 
 #------------------------------------------------------------------------------------------------
 # YOUR BOOKMARKED SINGLES
@@ -600,7 +615,35 @@ def searchBookmarkedSingles():
 
 #------------------------------------------------------------------------------------------------
 #BOOKMARK A SINGLE
-#testing git
+
+@app.route('/addBookmarkSingles', methods=['GET','POST'])
+def addBookmarkSingles():
+    if request.method == 'POST':
+      userid = request.form.get('userid')
+      artist = request.form.get('single')
+      since = request.form.get['since']
+
+      cursor = g.conn.execute("SELECT title FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
+      title = []
+      for t in cursor:
+        title.append(t[0])
+
+      cursor = g.conn.execute("SELECT release_date FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
+      releasedate = []
+      for rd in cursor:
+        releasedate.append(rd[0])
+
+      cursor = g.conn.execute("SELECT main_artist FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
+      mainartist = []
+      for ma in cursor:
+        mainartist.append(ma[0])
+      
+      cursor.close()
+
+      g.conn.execute('INSERT INTO bookmarks_single(uid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s)', (userid, title[0], releasedate[0], mainartist[0], since))
+
+    return render_template("addBookmarkSingles.html", boolean=True)
+
 
 #------------------------------------------------------------------------------------------------
 if __name__ == "__main__":

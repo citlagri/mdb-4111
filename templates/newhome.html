@@ -46,8 +46,9 @@
         <button type="submit">Submit</button>
     </form>
 
+    
 
-<table>
+ <table>
   <tr>
     <th>Content</th>
     <th>Title Name</th>
@@ -55,75 +56,10 @@
     <th>Since</th>
   </tr>
 
-<div> these are your reviews:
-<div>   {{reviews}}
+<div> these are your reviews: 
+<div>	{{reviews}}
  </table>
 
     </form>
   </body>
 </html>
-
-
-   <!--<div>
-      {%for n in infos%}
-      <div>{{n}}</div>
-      {% endfor %}
-    </div>--> 
-
-    <table>
-      <thead>
-        <th>Content</th>
-        <th>Title Name</th>
-        <th>Rating</th>
-        <th>Since</th>
-      </thead>
-      <tbody>
-        {% for info in infos %}
-        <tr> hello
-          <td>{{info['content']}}</td>
-          <td>{{info['titlename']}}</td>
-          <td>{{info['rating']}}</td>
-          <td>{{info['since']}}</td>     
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-
-<!---
-  <tr>
-    <td>      
-      {%for n in c%}
-        {{n}}
-      {% endfor %}
-
-    </td>
-    <td>      
-      {%for n in tm%}
-        {{n}}
-      {% endfor %}
-
-    </td>
-    <td> 
-      {{rating}}
-           
-      {%for n in rating%}
-       {{n}}
-      {% endfor %} 
-    </td>
-    <td>      
-      {%for n in since%}
-       {{n}}
-      {% endfor %}
-
-    </td>
-  </tr> 
-</table>
-
-    <h2>See all artist</h2>
-    <h3>See all Grammy's</h3>
-
-    </form>
-  </body>
-</html>
-    -->
