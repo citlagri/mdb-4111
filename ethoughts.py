@@ -183,7 +183,6 @@ def add():
 
 #------------------------------------------------------------------------------------------------
 #ESME'S HOME PAGE 
-
 def generator(keys, record):
   return {key:record for key, record in zip(keys, record)}
 
@@ -193,15 +192,14 @@ def home():
     #show them all of their reviews
   if request.method == 'POST':
     uid = request.form.get('userid')
-    labels = ['content','titlename','rating', 'since']
-    cursor = g.conn.execute("SELECT content, title_name, rating, since  FROM writes_a WHERE uid = %s", uid)
+    labels = ['content','titlename','rating', 'since', 'title']
+    cursor = g.conn.execute("SELECT content, title_name, rating, since, title  FROM writes_a NATURAL JOIN has_a WHERE uid = %s", uid)
     reviews = cursor.fetchall() #has all tupeless
     infos = list()
     for review in reviews:
       infos.append(generator(labels, review))
-
-    #creastes the key values pairs for a certain key?
-    print(infos)
+   
+    #print(infos) #madde for debugging
     return render_template("home.html", infos=infos)
 #except exc.SQLAlchemyError as e:
   #flash("unsuccessful login")
@@ -209,7 +207,7 @@ def home():
 #except Exception as err:
   #flash("error occured")
   #print(err)
-  return render_template("home.html", boolean=True) 
+  return render_template("home.html", boolean=True)  
 
 #------------------------------------------------------------------------------------------------
 #CIT'S HOME PAGE
@@ -222,20 +220,47 @@ def homepage():
 #signup page
 @app.route('/signup', methods=['GET','POST'])
 def signup():
+  #try:
   if request.method == 'POST':
+    userid = request.form.get('userid')
     username = request.form.get('username')
     login = request.form.get('login')
     name = request.form.get('name')
     email = request.form.get('email')
-    g.conn.execute('INSERT INTO users(username, login, name, email) VALUES (%s, %s, %s, %s)', (username, login, name, email))
-    cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s AND login=%s AND name=%s AND email = %s", (username, login, name, email))
-    ##HOW IS USERID BEING GENERATED?
-    uids = []
-    for userids in cursor:
-      uids.append(userids[0]) 
-    cursor.close()
-    context = dict(data = userids)
-    return render_template("home.html", **context)
+    #check first that this user doesnt exist already with their userid
+    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s ", userid)
+    tuples = cursor.rowcount
+    cursor.close
+    
+    #making sure login is unique and not empty
+    cursor = g.conn.execute("SELECT login FROM users WHERE login = %s ", login)
+    loginrows = cursor.rowcount
+    cursor.close
+    #print(tuples) #for error checking
+    if not login:
+      return render_template("signup.html", boolean = True)
+    elif loginrows == 1:
+      return render_template("signup.html", boolean = True)
+    #making sure username, name, and email arent empty
+    if not username:
+      return render_template("signup.html", boolean = True)
+    if not name:
+      return render_template("signup.html", boolean = True)
+    if not email:
+      return render_template("signup.html", boolean = True)
+    
+    #makinf sure user doesn't already exist
+    if(tuples == 1):
+      return render_template("signup.html", boolean = True)
+    else:
+      g.conn.execute('INSERT INTO users(uid, username, login, name, email) VALUES (%s, %s, %s, %s, %s)', (userid, username, login, name, email))
+      cursor = g.conn.execute("SELECT uid FROM users WHERE username = %s AND login=%s AND name=%s AND email = %s", (username, login, name, email))
+      uids = []
+      for userids in cursor:
+        uids.append(userids[0]) 
+      cursor.close()
+      context = dict(data = userids)
+      return render_template("home.html", **context)
 
   return render_template("signup.html", boolean=True)
 
@@ -244,34 +269,29 @@ def signup():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
-  try:
-    if request.method == 'POST':
-      userid = request.form.get('userid')
-      login = request.form.get('login')
-      cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s AND login = %s", (userid, login))
+  #try:
+  if request.method == 'POST':
+    userid = request.form.get('userid')
+    login = request.form.get('login')
+    if not userid:
+      return render_template("login.html", boolean=True)
+    if not login:
+      return render_template("login.html", boolean=True)
+    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s AND login = %s", (userid, login))
+    tuples = cursor.rowcount
+    cursor.close
+    print(tuples)
+    if(tuples != 1):
+      return render_template("login.html", boolean=True)
+    else:
       users = []
       for usersid in cursor:
         users.append(usersid)
         cursor.close()
         context = dict(data = users)
-        if(len(users) != 0):
-          return render_template("home.html", **context)
-        else:
-          #have message that says you don't an account, create one please!
-          #try and error?_?_?_?
-          #flash wont work
-          flash("unsuccessful login!")
-          return render_template('login.html', boolean = True)
-  except exc.SQLAlchemyError as e:
-    flash("unsuccessful login")
-    print(e)
-  except Exception as err:
-    flash("error occured")
-    print(err)
+        return render_template("home.html", **context)
       
   return render_template("login.html", boolean=True)
-    #abort(401)
-    #this_is_never_executed()
 
 
 #------------------------------------------------------------------------------------------------
@@ -284,7 +304,21 @@ def writereview():
     rating =  request.form.get('rating')
     since = request.form.get('since')
     userid = request.form.get('userid')
-    g.conn.execute('INSERT INTO writes_a (content, title_name, rating, since, uid) VALUES (%s, %s, %s, %s, %s)', (content, title, rating, since, userid))
+    songtitle = request.form.get('songtitle')
+    if not content:
+      render_template("writereview.html", boolean = True)
+    if not title:
+      render_template("writereview.html", boolean = True)
+    if not rating:
+      render_template("writereview.html", boolean = True)
+    if not since:
+      render_template("writereview.html", boolean = True)
+    if not userid:
+      render_template("writereview.html", boolean = True)
+    if not songtitle:
+      render_template("writereview.html", boolean = True)
+      
+    g.conn.execute('INSERT INTO writes_a (content, title_name, rating, since, uid) VALUES (%s, %s, %d, %s, %s, %s)', (content, title, rating, since, userid, songtitle))
     #don't know how to enter date
     #automatically picks out rid? it's a primary key
     #flash that their review has been received
@@ -299,39 +333,47 @@ def writereview():
 def searchArtists():
 
   if request.method == 'POST':
-        userInput = request.form['stagename']
+        userInput = request.form.get('stagename')
 
-        cursor = g.conn.execute("SELECT stage_name FROM artists WHERE stage_name = %s", userInput)
+	#create a page that directs all errors to such as "oops this doesnt exist click back"
+	
+        if not userInput:
+              return render_template("error.html", boolean = True) 
+	
+        cursor = g.conn.execute("SELECT stage_name FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         stagenames = []
         for result in cursor:
           stagenames.append(result[0])  # can also be accessed using result[0]
 
-        cursor = g.conn.execute("SELECT birthday FROM artists WHERE stage_name = %s", userInput)
+        if not stagenames:
+              return render_template("error.html", boolean = True)  
+
+        cursor = g.conn.execute("SELECT birthday FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         birthdays = []
         for bdays in cursor:
           birthdays.append(bdays[0])
 
-        cursor = g.conn.execute("SELECT real_name FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT real_name FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         realname = []
         for rn in cursor:
           realname.append(rn[0])
 
-        cursor = g.conn.execute("SELECT year_started FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT year_started FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         yearstarted = []
         for ys in cursor:
           yearstarted.append(ys[0])
 
-        cursor = g.conn.execute("SELECT years_active FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT years_active FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         yearsactive = []
         for ya in cursor:
           yearsactive.append(ya[0])
 
-        cursor = g.conn.execute("SELECT genre FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT genre FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         genre = []
         for genres in cursor:
           genre.append(genres[0])
 
-        cursor = g.conn.execute("SELECT role FROM artists WHERE stage_name = %s", userInput)
+        cursor = g.conn.execute("SELECT role FROM artists WHERE LOWER(stage_name) = LOWER(%s)", userInput)
         role = []
         for r in cursor:
           role.append(r[0])
@@ -360,27 +402,33 @@ def searchSingles():
   if request.method == 'POST':
         userInput = request.form['title']
 
-        cursor = g.conn.execute("SELECT title FROM singles WHERE title = %s", userInput)
+        if not userInput:
+              return render_template("error.html", boolean = True)  
+
+        cursor = g.conn.execute("SELECT title FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
         title = []
         for result in cursor:
           title.append(result[0])
 
-        cursor = g.conn.execute("SELECT release_date FROM singles WHERE title = %s", userInput)
+        if not title:
+              return render_template("error.html", boolean = True)
+
+        cursor = g.conn.execute("SELECT release_date FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
         releasedate = []
         for rd in cursor:
           releasedate.append(rd[0])
 
-        cursor = g.conn.execute("SELECT main_artist FROM singles WHERE title = %s", userInput)
+        cursor = g.conn.execute("SELECT main_artist FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
         mainartist = []
         for main in cursor:
           mainartist.append(main[0])
 
-        cursor = g.conn.execute("SELECT genre FROM singles WHERE title = %s", userInput)
+        cursor = g.conn.execute("SELECT genre FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
         genre = []
         for gs in cursor:
           genre.append(gs[0])
 
-        cursor = g.conn.execute("SELECT part_of_album FROM singles WHERE title = %s", userInput)
+        cursor = g.conn.execute("SELECT part_of_album FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
         album = []
         for a in cursor:
           album.append(a[0])
@@ -407,27 +455,33 @@ def searchGrammy():
   if request.method == 'POST':
     userInput = request.form['artist']
 
-    cursor = g.conn.execute("SELECT award FROM awarded_to WHERE main_artist = %s", userInput)
+    if not userInput:
+      return render_template("error.html", boolean = True)
+
+    cursor = g.conn.execute("SELECT award FROM awarded_to WHERE LOWER(main_artist) = LOWER(%s)", userInput)
     award = []
     for a in cursor:
       award.append(a[0])
 
-    cursor = g.conn.execute("SELECT year FROM awarded_to WHERE main_artist = %s", userInput)
+    if not award:
+      return render_template("error.html", boolean = True)
+
+    cursor = g.conn.execute("SELECT year FROM awarded_to WHERE LOWER(main_artist) = LOWER(%s)", userInput)
     year = []
     for y in cursor:
       year.append(y[0])
 
-    cursor = g.conn.execute("SELECT release_date FROM awarded_to WHERE main_artist = %s", userInput)
+    cursor = g.conn.execute("SELECT release_date FROM awarded_to WHERE LOWER(main_artist) = LOWER(%s)", userInput)
     releasedate = []
     for rd in cursor:
       releasedate.append(rd[0])
 
-    cursor = g.conn.execute("SELECT title FROM awarded_to WHERE main_artist = %s", userInput)
+    cursor = g.conn.execute("SELECT title FROM awarded_to WHERE LOWER(main_artist) = LOWER(%s)", userInput)
     title = []
     for ma in cursor:
       title.append(ma[0])
 
-    cursor = g.conn.execute("SELECT main_artist FROM awarded_to WHERE main_artist = %s", userInput)
+    cursor = g.conn.execute("SELECT main_artist FROM awarded_to WHERE LOWER(main_artist) = LOWER(%s)", userInput)
     mainartist = []
     for ma in cursor:
       mainartist.append(ma[0])
@@ -444,7 +498,6 @@ def searchGrammy():
 
   return render_template("searchGrammy.html", boolean = True)
 
-
 #------------------------------------------------------------------------------------------------
 #YOUR BOOKMARKED ARTISTS
 
@@ -453,6 +506,18 @@ def searchBookmarkedArtists():
 
   if request.method == 'POST':
         userInput = request.form['uid']
+
+        if not userInput:
+              return render_template("error.html", boolean = True)
+
+        cursor = g.conn.execute("SELECT users FROM users  WHERE uid = %s", userInput)
+        check = []
+        for ch in cursor:
+          check.append(ch[0])  # can also be accessed using result[0]
+
+        if not check:
+              return render_template("error.html", boolean = True)
+
 
         cursor = g.conn.execute("SELECT stage_name FROM artists NATURAL JOIN bookmarks_artist  WHERE uid = %s", userInput)
         stagenames = []
@@ -496,26 +561,59 @@ def searchBookmarkedArtists():
         cursor.close()
 
         context = {
-          "stagenameis": result[0],
-          "birthdays": bdays[0],
-          "realname": rn[0],
-          "yearstarted": ys[0],
-          "yearsactive": ya[0],
-          "genre": genres[0],
-          "role": r[0],
-          "since": s[0],
+          "stagenameis": stagenames,
+          "birthdays": birthdays,
+          "realname": realname,
+          "yearstarted": yearstarted,
+          "yearsactive": yearsactive,
+          "genre": genre,
+          "role": role,
+          "since": sincedate,
        }
-       
         return render_template("searchBookmarkedArtistsResults.html", **context)
 
   return render_template("searchBookmarkedArtists.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 #BOOKMARK AN ARTIST
-#they enter an artist and we look for them in the artists table and then join it with their table
-# or wtf are we doing with this -> the same for singles
 
-#enter an artist name then get the results from 
+@app.route('/addBookmarkArtist', methods=['GET','POST'])
+def addBookmarkArtist():
+    if request.method == 'POST':
+      userid = request.form.get('userid')
+      artist = request.form.get('artist')
+      since = request.form.get['since']
+
+      if not userid:
+            return render_template("error.html", boolean = True)
+
+      if not artist:
+            return render_template("error.html", boolean = True)
+
+      if not since:
+            return render_template("error.html", boolean = True)
+
+      cursor = g.conn.execute("SELECT users FROM users  WHERE uid = %s", userInput)
+      check = []
+      for ch in cursor:
+        check.append(ch[0])  # can also be accessed using result[0]
+
+      if not check:
+            return render_template("error.html", boolean = True)
+
+      cursor = g.conn.execute("SELECT artist_id FROM artist WHERE LOWER(main_artist) = LOWER(%s)", userInput)
+      mainartist = []
+      for ma in cursor:
+        mainartist.append(ma[0])
+      cursor.close()
+
+      if not mainartist:
+            return render_template("error.html", boolean = True)
+
+      g.conn.execute('INSERT INTO bookmarks_artist(uid, artist_id, since) VALUES (%s, %s, %s)', (userid, mainartist[0], since))
+
+    return render_template("addBookmarkArtist.html", boolean=True)
+
 
 #------------------------------------------------------------------------------------------------
 # YOUR BOOKMARKED SINGLES
@@ -527,6 +625,18 @@ def searchBookmarkedSingles():
 
   if request.method == 'POST':
         userInput = request.form['uid']
+
+        if not userid:
+              return render_template("error.html", boolean = True)
+
+        cursor = g.conn.execute("SELECT users FROM users  WHERE uid = %s", userInput)
+        check = []
+        for ch in cursor:
+          check.append(ch[0])  # can also be accessed using result[0]
+
+        if not check:
+              return render_template("error.html", boolean = True)
+
 
         cursor = g.conn.execute("SELECT title FROM singles NATURAL JOIN bookmarks_singles WHERE uid = %s", userInput)
         title = []
@@ -574,7 +684,55 @@ def searchBookmarkedSingles():
 
 #------------------------------------------------------------------------------------------------
 #BOOKMARK A SINGLE
-#testing git
+
+@app.route('/addBookmarkSingle', methods=['GET','POST'])
+def addBookmarkSingle():
+    if request.method == 'POST':
+      userid = request.form.get('userid')
+      artist = request.form.get('single')
+      since = request.form.get['since']
+
+      if not userid:
+            return render_template("error.html", boolean = True)
+
+      if not title:
+            return render_template("error.html", boolean = True)
+
+      if not since:
+            return render_template("error.html", boolean = True)
+
+      cursor = g.conn.execute("SELECT users FROM users  WHERE uid = %s", userInput)
+      check = []
+      for ch in cursor:
+        check.append(ch[0])  # can also be accessed using result[0]
+
+      if not check:
+            return render_template("error.html", boolean = True)
+
+      cursor = g.conn.execute("SELECT title FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
+      title = []
+      for t in cursor:
+        title.append(t[0])
+      
+      if not title:
+            return render_template("error.html", boolean = True)
+
+      cursor = g.conn.execute("SELECT release_date FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
+      releasedate = []
+      for rd in cursor:
+        releasedate.append(rd[0])
+
+      cursor = g.conn.execute("SELECT main_artist FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
+      mainartist = []
+      for ma in cursor:
+        mainartist.append(ma[0])
+      
+      cursor.close()
+
+      g.conn.execute('INSERT INTO bookmarks_single(uid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s)', (userid, title[0], releasedate[0], mainartist[0], since))
+
+    return render_template("addBookmarkSingle.html", boolean=True)
+
 
 #------------------------------------------------------------------------------------------------
 if __name__ == "__main__":

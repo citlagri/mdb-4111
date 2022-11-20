@@ -192,8 +192,8 @@ def home():
     #show them all of their reviews
   if request.method == 'POST':
     uid = request.form.get('userid')
-    labels = ['content','titlename','rating', 'since']
-    cursor = g.conn.execute("SELECT content, title_name, rating, since  FROM writes_a WHERE uid = %s", uid)
+    labels = ['content','titlename','rating', 'since', 'title']
+    cursor = g.conn.execute("SELECT content, title_name, rating, since, title  FROM writes_a NATURAL JOIN has_a WHERE uid = %s", uid)
     reviews = cursor.fetchall() #has all tupeless
     infos = list()
     for review in reviews:
@@ -231,8 +231,26 @@ def signup():
     cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s ", userid)
     tuples = cursor.rowcount
     cursor.close
-    print( tuples)
-    if(tuples >= 0):
+    
+    #making sure login is unique and not empty
+    cursor = g.conn.execute("SELECT login FROM users WHERE login = %s ", login)
+    loginrows = cursor.rowcount
+    cursor.close
+    #print(tuples) #for error checking
+    if not login:
+      return render_template("signup.html", boolean = True)
+    elif loginrows == 1:
+      return render_template("signup.html", boolean = True)
+    #making sure username, name, and email arent empty
+    if not username:
+      return render_template("signup.html", boolean = True)
+    if not name:
+      return render_template("signup.html", boolean = True)
+    if not email:
+      return render_template("signup.html", boolean = True)
+    
+    #makinf sure user doesn't already exist
+    if(tuples == 1):
       return render_template("signup.html", boolean = True)
     else:
       g.conn.execute('INSERT INTO users(uid, username, login, name, email) VALUES (%s, %s, %s, %s, %s)', (userid, username, login, name, email))
@@ -243,12 +261,6 @@ def signup():
       cursor.close()
       context = dict(data = userids)
       return render_template("home.html", **context)
-  #except exc.SQLAlchemyError as e:
-   # flash("unsuccessful signup")
-   # print(e)
-  #except Exception as err:
-   # flash("error occured")
-   # print(err)
 
   return render_template("signup.html", boolean=True)
 
@@ -257,32 +269,29 @@ def signup():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
-  try:
-    if request.method == 'POST':
-      userid = request.form.get('userid')
-      login = request.form.get('login')
-      cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s AND login = %s", (userid, login))
+  #try:
+  if request.method == 'POST':
+    userid = request.form.get('userid')
+    login = request.form.get('login')
+    if not userid:
+      return render_template("login.html", boolean=True)
+    if not login:
+      return render_template("login.html", boolean=True)
+    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s AND login = %s", (userid, login))
+    tuples = cursor.rowcount
+    cursor.close
+    print(tuples)
+    if(tuples != 1):
+      return render_template("login.html", boolean=True)
+    else:
       users = []
       for usersid in cursor:
         users.append(usersid)
         cursor.close()
         context = dict(data = users)
-        if(len(users) != 0):
-          return render_template("home.html", **context)
-        else:
-          #have message that says you don't an account, create one please!
-          #try and error?_?_?_?
-          return render_template("login.html", boolean=True)
-  except exc.SQLAlchemyError as e:
-    flash("unsuccessful login")
-    print(e)
-  except Exception as err:
-    flash("error occured")
-    print(err)
+        return render_template("home.html", **context)
       
   return render_template("login.html", boolean=True)
-    #abort(401)
-    #this_is_never_executed()
 
 
 #------------------------------------------------------------------------------------------------
@@ -290,12 +299,31 @@ def login():
 @app.route('/writereview', methods=['GET','POST'])
 def writereview():
   if request.method == 'POST':
-    content = request.form.get['review']
-    title = request.form.get['title']
-    rating =  request.form.get['rating']
-    since = request.form.get['since']
-    userid = request.form.get['userid']
-    g.conn.execute('INSERT INTO writes_a (content, title_name, rating, since, uid) VALUES (%s, %s, %d, %s, %s)', content, title, rating, since, userid)
+    content = request.form.get('review')
+    title = request.form.get('title')
+    rating =  request.form.get('rating')
+    since = request.form.get('since')
+    userid = request.form.get('userid')
+    songtitle = request.form.get('songtitle')
+    reviewid = 27;
+
+    #check if null
+    if not content:
+      render_template("writereview.html", boolean = True)
+    if not title:
+      render_template("writereview.html", boolean = True)
+    if not rating:
+      render_template("writereview.html", boolean = True)
+    if not since:
+      render_template("writereview.html", boolean = True)
+    if not userid:
+      render_template("writereview.html", boolean = True)
+    if not songtitle:
+      render_template("writereview.html", boolean = True)
+
+    #just in case they pput incorrect userid, make sure uid and rid dosnt exist twice
+
+    g.conn.execute('INSERT INTO writes_a (content, title_name, rating, since, uid) VALUES (%s, %s, %d, %s, %s, %s)', (content, title, rating, since, userid, songtitle))
     #don't know how to enter date
     #automatically picks out rid? it's a primary key
     #flash that their review has been received
