@@ -1,10 +1,5 @@
 <html>
   <style>
-    table,
-    th,
-    td {
-      border: 1px solid black;
-    }
     h1 {
       color: #0d4c92;
       text-align: center;
@@ -39,73 +34,56 @@
     }
   </style>
   <body>
-    <h1>HOME</h1>
-    {% with messages = get_flashed_messages() %} {% if messages %} {% for
-    message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %} {% endif %} {% endwith %}
-
+  <h1>HOME</h1>
     <div>
       This is ur userid: {{data}}. Don't share this information with anyone
     </div>
 
     <form action="/home" method="POST">
-      <div>
-        Want to see all your reviews? Enter Your Userid <br />
-        <input type="text" name="userid" placeholder="#" maxlength="20" /><br />
-      </div>
-      <br />
-      <button type="submit">Submit</button>
+        <div>Want to see all your reviews? Enter Your Userid <br>
+            <input type="text" name="userid" placeholder="#" maxlength="20"/><br>
+        </div><br>
+        <button type="submit">Submit</button>
     </form>
 
-    <table>
-      <thead>
-        <th>Content</th>
-        <th>Title Name</th>
-        <th>Rating</th>
-        <th>Since</th>
-      </thead>
-      <tbody>
-        {% for info in infos %}
-        <tr>
-          <td>{{info['content']}}</td>
-          <td>{{info['titlename']}}</td>
-          <td>{{info['rating']}}</td>
-          <td>{{info['since']}}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
 
-    <!---
+ <table>
   <tr>
-    <td>      
+    <th>Content</th>
+    <th>Title Name</th>
+    <th>Rating</th>
+    <th>Since</th>
+  </tr>
+
+<div> these are your reviews:
+        {{reviews}}
+</div>
+  <tr>
+    <td>
       {%for n in c%}
-        {{n}}
+        <div>{{n}}</div>
       {% endfor %}
 
     </td>
-    <td>      
+    <td>
       {%for n in tm%}
-        {{n}}
+        <div>{{n}}</div>
       {% endfor %}
 
     </td>
-    <td> 
-      {{rating}}
-           
+    <td>
       {%for n in rating%}
-       {{n}}
-      {% endfor %} 
+       <div>{{n}}</div>
+      {% endfor %}
     </td>
-    <td>      
+    <td>
       {%for n in since%}
-       {{n}}
+       <div>{{n}}</div>
       {% endfor %}
 
     </td>
-  </tr> 
-</table>
+  </tr>
+  </table>
 
     <h2>See all artist</h2>
     <h3>See all Grammy's</h3>
@@ -113,6 +91,4 @@
     </form>
   </body>
 </html>
-    -->
-  </body>
-</html>
+
