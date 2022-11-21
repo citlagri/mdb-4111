@@ -306,9 +306,7 @@ def writereview():
     userid = request.form.get('userid')
     songtitle = request.form.get('songtitle')
     reviewid = 27
-    reviewid += 1
-    print(reviewid)
-    reviewid = str(reviewid)
+    print(reviewid)# debugging
 
     #check if null
     if not content:
@@ -327,21 +325,50 @@ def writereview():
     #make sure uid exists
     cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s", userid)
     tuples = cursor.rowcount
-    cursor.close()
-    if tuples != 1:
-      render_template("writereview.html", boolean = True)
+    if (tuples != 1):
+      render_template("error.html", boolean = True)
 
     #making sure single exists
     cursor = g.conn.execute("SELECT title FROM singles WHERE LOWER(title) = LOWER(%s)", songtitle)
     singletup = cursor.rowcount
-
+    print(cursor)#debugging
     cursor.close()
-    print(cursor)
     if singletup != 1:
-      render_template("writereview.html", boolean = True)
-    else:
+      render_template("error.html", boolean = True)
 
-      g.conn.execute('INSERT INTO writes_a (content, title_name, rating, since, uid) VALUES (%s, %s, %d, %s, %s, %s)', (content, title, rating, since, userid, songtitle))
+    #selecting max rid toincrement by one and create new rid and cast it as char again
+    cursor = g.conn.execute("SELECT MAX(CAST(rid AS INTEGER)) FROM writes_a")
+    newrid = []
+    for result in cursor:
+      newrid.append(result[0]) 
+    newrids = newrid[0] + 1
+    print("Line 345 when it's a int")
+    print(newrids)
+    
+    newrids = str(newrids)
+    print("Line 349 when its a sstring")
+    print(newrids)#error checking
+
+    #insert tuple to writes_a
+    #g.conn.execute('INSERT INTO writes_a (rid, content, title_name, rating, since, uid) VALUES (%s, %s, %s, %s, %s, %s)', (newrid, content, title, rating, since, userid, songtitle))
+
+    str(rating)
+    g.conn.execute('INSERT INTO writes_a (rid, content, title_name, rating, since, uid) VALUES (%s, %s, %s, %s, %s, %s)', (newrids, content, title, rating, since, userid, songtitle))
+    #get release_date of the single
+    cursor = g.conn.execute("SELECT release_date FROM singles WHERE title = %s", songtitle)
+    st = []
+    for t in cursor:
+      st.append(t[0])
+
+    #get main artist of the single
+    cursor = g.conn.execute("SELECT main_artist FROM singles WHERE title = %s", songtitle)
+    ma = []
+    for m in cursor:
+      ma.append(m[0])
+
+    g.conn.execute('INSERT INTO has_a (uid, rid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s, %s)', (userid, newrid, songtitle, st[0], ma[0], since))
+    return render_template("home.html", boolean = True)
+
 
   return render_template("writereview.html", boolean = True)
 
@@ -709,14 +736,14 @@ def addBookmarkArtist():
             return render_template("error.html", boolean = True)
 
       cursor = g.conn.execute("SELECT uid, artist_id FROM bookmarks_artist WHERE uid = %s AND artist_id = %s",(userid, mainartist[0]))
-      reviews = cursor.fetchall()
+      reviews = cursor.rowcount
       print(reviews)
       cursor.close() 
-      if reviews == 1:
-            return render_template("error.html", boolean = True)
-      else
-            g.conn.execute('INSERT INTO bookmarks_artist(uid, artist_id, since) VALUES (%s, %s, %s)', (userid, mainartist[0], since))
-            return render_template("homepage.html", boolean = True)
+      if (reviews == 1):
+        return render_template("error.html", boolean = True)
+      else:
+        g.conn.execute('INSERT INTO bookmarks_artist(uid, artist_id, since) VALUES (%s, %s, %s)', (userid, mainartist[0], since))
+        return render_template("homepage.html", boolean = True)
     return render_template("addBookmarkArtist.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
@@ -830,12 +857,19 @@ def addBookmarkSingle():
       mainartist = []
       for ma in cursor:
         mainartist.append(ma[0])
-      
-      cursor.close()
+    
+      cursor = g.conn.execute("SELECT uid, title, release_date, main_artist FROM bookmarks_singles WHERE uid = %s AND title = %s AND release_date = %s AND main_artist = %s",(userid, title[0], releasedate[0], mainartist[0]))
+      reviews = cursor.rowcount
+      print(reviews)
+      cursor.close() 
+      if (reviews == 1):
+        return render_template("error.html", boolean = True)
+      else:
+        g.conn.execute('INSERT INTO bookmarks_singles(uid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s)', (userid, title[0], releasedate[0], mainartist[0], since))
+        return render_template("homepage.html", boolean = True)
 
-      g.conn.execute('INSERT INTO bookmarks_single(uid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s)', (userid, title[0], releasedate[0], mainartist[0], since))
-
-      return render_template("homepage.html", boolean = True)
+     # g.conn.execute('INSERT INTO bookmarks_single(uid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s)', (userid, title[0], releasedate[0], mainartist[0], since))
+      #return render_template("homepage.html", boolean = True)
 
     return render_template("addBookmarkSingle.html", boolean = True)
 
