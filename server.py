@@ -697,8 +697,8 @@ def addBookmarkArtist():
 
       g.conn.execute('INSERT INTO bookmarks_artist(uid, artist_id, since) VALUES (%s, %s, %s)', (userid, mainartist[0], since))
 
-    return render_template("homepage.html", boolean=True)
-
+      return render_template("addBookmarkArtist.html", boolean = True)
+  return render_template("homepage.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 # YOUR BOOKMARKED SINGLES
@@ -816,8 +816,9 @@ def addBookmarkSingle():
 
       g.conn.execute('INSERT INTO bookmarks_single(uid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s)', (userid, title[0], releasedate[0], mainartist[0], since))
 
-    return render_template("homepage.html", boolean=True)
+      return render_template("addBookmarkSingle.html", boolean = True)
 
+  return render_template("homepage.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
