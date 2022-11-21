@@ -7,13 +7,40 @@
     <th>Album It's A Part Of</th>
     <th>Saved Since</th>
   </tr>
-  <tr>
-    <td>{{title}}</td>
-    <td>{{releasedate}}</td>
-    <td>{{main}}</td>
-    <td>{{genre}}</td>
-    <td>{{album}}</td>
-    <td>{{since}}</td>
+
+<tr>
+                    <td>
+                      {%for n in title%}
+                      <div>{{n}}</div>
+                      {% endfor %}
+                    </td>
+                    <td>
+                      {%for y in releasedate%}
+                      <div>{{y}}</div>
+                      {% endfor %}
+                    </td>
+                    <td>
+                      {%for t in main%}
+                      <div>{{t}}</div>
+                      {% endfor %}
+                    </td>
+                    <td>
+                      {%for d in genre%}
+                      <div>{{d}}</div>
+                      {% endfor %}
+                    </td>
+                     <td>
+                      {%for m in album%}
+                      <div>{{m}}</div>
+                      {% endfor %}
+                    </td>
+
+                   <td>
+                      {%for m in since%}
+                      <div>{{m}}</div>
+                      {% endfor %}
+                    </td>
+
   </tr>
 </table>
 
