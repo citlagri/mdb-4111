@@ -667,7 +667,7 @@ def addBookmarkArtist():
     if request.method == 'POST':
       userid = request.form.get('userid')
       artist = request.form.get('artist')
-      since = request.form.get['since']
+      since = request.form.get('since')
 
       if not userid:
             return render_template("error.html", boolean = True)
@@ -678,7 +678,7 @@ def addBookmarkArtist():
       if not since:
             return render_template("error.html", boolean = True)
 
-      cursor = g.conn.execute("SELECT users FROM users  WHERE uid = %s", userInput)
+      cursor = g.conn.execute("SELECT users FROM users  WHERE uid = %s", userid)
       check = []
       for ch in cursor:
         check.append(ch[0])  # can also be accessed using result[0]
@@ -686,19 +686,24 @@ def addBookmarkArtist():
       if not check:
             return render_template("error.html", boolean = True)
 
-      cursor = g.conn.execute("SELECT artist_id FROM artist WHERE LOWER(main_artist) = LOWER(%s)", userInput)
+      cursor = g.conn.execute("SELECT artist_id FROM artists WHERE LOWER(stage_name) = LOWER(%s)", artist)
       mainartist = []
       for ma in cursor:
         mainartist.append(ma[0])
-      cursor.close()
 
       if not mainartist:
             return render_template("error.html", boolean = True)
 
-      g.conn.execute('INSERT INTO bookmarks_artist(uid, artist_id, since) VALUES (%s, %s, %s)', (userid, mainartist[0], since))
-
-      return render_template("addBookmarkArtist.html", boolean = True)
-  return render_template("homepage.html", boolean = True)
+      cursor = g.conn.execute("SELECT uid, artist_id FROM bookmarks_artist WHERE uid = %s AND artist_id = %s",(userid, mainartist[0]))
+      reviews = cursor.fetchall()
+      print(reviews)
+      cursor.close() 
+      if reviews == 1:
+            return render_template("error.html", boolean = True)
+      else
+            g.conn.execute('INSERT INTO bookmarks_artist(uid, artist_id, since) VALUES (%s, %s, %s)', (userid, mainartist[0], since))
+            return render_template("homepage.html", boolean = True)
+    return render_template("addBookmarkArtist.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 # YOUR BOOKMARKED SINGLES
@@ -774,8 +779,8 @@ def searchBookmarkedSingles():
 def addBookmarkSingle():
     if request.method == 'POST':
       userid = request.form.get('userid')
-      artist = request.form.get('single')
-      since = request.form.get['since']
+      title = request.form.get('single')
+      since = request.form.get('since')
 
       if not userid:
             return render_template("error.html", boolean = True)
@@ -786,7 +791,7 @@ def addBookmarkSingle():
       if not since:
             return render_template("error.html", boolean = True)
 
-      cursor = g.conn.execute("SELECT users FROM users  WHERE uid = %s", userInput)
+      cursor = g.conn.execute("SELECT users FROM users  WHERE uid = %s", userid)
       check = []
       for ch in cursor:
         check.append(ch[0])  # can also be accessed using result[0]
@@ -794,7 +799,7 @@ def addBookmarkSingle():
       if not check:
             return render_template("error.html", boolean = True)
 
-      cursor = g.conn.execute("SELECT title FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
+      cursor = g.conn.execute("SELECT title FROM singles WHERE LOWER(title) = LOWER(%s)", title)
       title = []
       for t in cursor:
         title.append(t[0])
@@ -802,12 +807,12 @@ def addBookmarkSingle():
       if not title:
             return render_template("error.html", boolean = True)
 
-      cursor = g.conn.execute("SELECT release_date FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
+      cursor = g.conn.execute("SELECT release_date FROM singles WHERE LOWER(title) = LOWER(%s)", title)
       releasedate = []
       for rd in cursor:
         releasedate.append(rd[0])
 
-      cursor = g.conn.execute("SELECT main_artist FROM singles WHERE LOWER(title) = LOWER(%s)", userInput)
+      cursor = g.conn.execute("SELECT main_artist FROM singles WHERE LOWER(title) = LOWER(%s)", title)
       mainartist = []
       for ma in cursor:
         mainartist.append(ma[0])
@@ -816,9 +821,9 @@ def addBookmarkSingle():
 
       g.conn.execute('INSERT INTO bookmarks_single(uid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s)', (userid, title[0], releasedate[0], mainartist[0], since))
 
-      return render_template("addBookmarkSingle.html", boolean = True)
+      return render_template("homepage.html", boolean = True)
 
-  return render_template("homepage.html", boolean = True)
+    return render_template("addBookmarkSingle.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
