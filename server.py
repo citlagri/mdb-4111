@@ -230,12 +230,12 @@ def signup():
     #check first that this user doesnt exist already with their userid
     cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s ", userid)
     tuples = cursor.rowcount
-    cursor.close
+    cursor.close()
     
     #making sure login is unique and not empty
     cursor = g.conn.execute("SELECT login FROM users WHERE login = %s ", login)
     loginrows = cursor.rowcount
-    cursor.close
+    cursor.close()
     #print(tuples) #for error checking
     if not login:
       return render_template("signup.html", boolean = True)
@@ -279,7 +279,7 @@ def login():
       return render_template("login.html", boolean=True)
     cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s AND login = %s", (userid, login))
     tuples = cursor.rowcount
-    cursor.close
+    cursor.close()
     print(tuples)
     if(tuples != 1):
       return render_template("login.html", boolean=True)
@@ -305,7 +305,10 @@ def writereview():
     since = request.form.get('since')
     userid = request.form.get('userid')
     songtitle = request.form.get('songtitle')
-    reviewid = 27;
+    reviewid = 27
+    reviewid += 1
+    print(reviewid)
+    reviewid = str(reviewid)
 
     #check if null
     if not content:
@@ -321,13 +324,24 @@ def writereview():
     if not songtitle:
       render_template("writereview.html", boolean = True)
 
-    #just in case they pput incorrect userid, make sure uid and rid dosnt exist twice
+    #make sure uid exists
+    cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s", userid)
+    tuples = cursor.rowcount
+    cursor.close()
+    if tuples != 1:
+      render_template("writereview.html", boolean = True)
 
-    g.conn.execute('INSERT INTO writes_a (content, title_name, rating, since, uid) VALUES (%s, %s, %d, %s, %s, %s)', (content, title, rating, since, userid, songtitle))
-    #don't know how to enter date
-    #automatically picks out rid? it's a primary key
-    #flash that their review has been received
-    #how to take care of cases where it's rejected?
+    #making sure single exists
+    cursor = g.conn.execute("SELECT title FROM singles WHERE LOWER(title) = LOWER(%s)", songtitle)
+    singletup = cursor.rowcount
+
+    cursor.close()
+    print(cursor)
+    if singletup != 1:
+      render_template("writereview.html", boolean = True)
+    else:
+
+      g.conn.execute('INSERT INTO writes_a (content, title_name, rating, since, uid) VALUES (%s, %s, %d, %s, %s, %s)', (content, title, rating, since, userid, songtitle))
 
   return render_template("writereview.html", boolean = True)
 

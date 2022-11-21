@@ -57,7 +57,7 @@
         Enter today's date in the form 20xx-MM-DD <br />
         <input type="date" id="since" name="trip-start"
        value="2022-07-16"
-       min="1998-01-01" max="2050-12-31">
+       min="1998-01-01" max="2050-12-31"/>
       </div>
 
       <div>
@@ -65,16 +65,46 @@
         <input type="text" name="userid" placeholder="##" maxlength="20" />
       </div>
 
-      <div>
-        Enter title of the song <br />
-        <input type="text" name="songtitle" placeholder="##" maxlength="70" />
-      </div>
+      <fieldset>
+        <legend>Please select the single's artist:</legend>
+        <div>
+          <input type="radio" id="Choice1" name="artists" />
+          <label for="Choice1">West End Blues</label>
+
+          <input type="radio" id="Choice2" name="artists" />
+          <label for="Choice2">Efecto</label>
+
+          <input type="radio" id="Choice3" name="artists" />
+          <label for="Choice3">ALIEN SUPERSTAR</label>
+
+          <input type="radio" id="Choice4" name="artists" />
+          <label for="Choice4">P.Y.T (Pretty Young Thing)</label>
+
+          <input type="radio" id="Choice5" name="artists" />
+          <label for="Choice5">Bad Romance</label>
+
+          <input type="radio" id="Choice6" name="artists" />
+          <label for="Choice6">Summer</label>
+
+          <input type="radio" id="Choice7" name="artists" />
+          <label for="Choice7">Puttin On the Ritz</label>
+
+          <input type="radio" id="Choice8" name="artists" />
+          <label for="Choice8">motive</label>
+
+          <input type="radio" id="Choice9" name="artists" />
+          <label for="Choice9">We Dont Talk ABout Bruno</label>
+
+          <input type="radio" id="Choice10" name="artists" />
+          <label for="Choice10">Still D.R.E</label>
+        </div>
+      </fieldset>
 
       <div align="center">
         <button type="submit">Post Review</button>
       </div>
     </form>
 
-    <p></p><a href="{{url_for('home')}}">Go Back To Home Page</a></p>
+    <p></p><a href="{{url_for('home')}}">Go Back To Home Page To Check Your Reviews</a></p>
   </body>
 </html>
