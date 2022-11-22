@@ -280,7 +280,7 @@ def login():
       return render_template("login.html", boolean=True)
     cursor = g.conn.execute("SELECT uid FROM users WHERE uid = %s AND login = %s", (userid, login))
     tuples = cursor.rowcount
-    cursor.close()
+    #cursor.close()
     print(tuples)
     if(tuples != 1):
       return render_template("login.html", boolean=True)
@@ -308,6 +308,9 @@ def writereview():
     songtitle = request.form.get('songtitle')
     reviewid = 27
     print(reviewid)# debugging
+    print(request.form)
+    print(songtitle)
+    print(rating)
 
     #check if null
     if not content:
@@ -343,31 +346,39 @@ def writereview():
     for result in cursor:
       newrid.append(result[0]) 
     newrids = newrid[0] + 1
-    print("Line 345 when it's a int")
+    print("Line 346 when it's a int")
     print(newrids)
     
     newrids = str(newrids)
-    print("Line 349 when its a sstring")
+    print("Line 350 when its a sstring")
     print(newrids)#error checking
 
     #insert tuple to writes_a
-    #g.conn.execute('INSERT INTO writes_a (rid, content, title_name, rating, since, uid) VALUES (%s, %s, %s, %s, %s, %s)', (newrid, content, title, rating, since, userid, songtitle))
 
-    str(rating)
-    g.conn.execute('INSERT INTO writes_a (rid, content, title_name, rating, since, uid) VALUES (%s, %s, %s, %s, %s, %s)', (newrids, content, title, rating, since, userid, songtitle))
+    # (newrid, content, title, rating, since, userid, songtitle))
+    #g.conn.execute('INSERT INTO writes_a (rid, rating, content, title_name, since, uid) VALUES (%s, %s, %s, %s, %s, %s)',\
+      # str(newrids), str(rating), str(content), str(title), str(since), str(userid))
+
+    g.conn.execute('INSERT INTO writes_a (rid, content, title_name, rating, since, uid) VALUES (%s, %s, %s, %s, %s, %s)',\
+       str(newrids), str(content), str(title), str(rating), str(since), str(userid))
     #get release_date of the single
     cursor = g.conn.execute("SELECT release_date FROM singles WHERE title = %s", songtitle)
     st = []
     for t in cursor:
       st.append(t[0])
+    
 
     #get main artist of the single
     cursor = g.conn.execute("SELECT main_artist FROM singles WHERE title = %s", songtitle)
     ma = []
     for m in cursor:
       ma.append(m[0])
-
-    g.conn.execute('INSERT INTO has_a (uid, rid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s, %s)', (userid, newrid, songtitle, st[0], ma[0], since))
+    print(len(st))
+    print(len(ma))
+    print(st)
+    print(ma)
+    g.conn.execute('INSERT INTO has_a (uid, rid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s, %s)',\
+       (userid, newrids, songtitle, st[0], ma[0], since))
     return render_template("home.html", boolean = True)
 
 
@@ -898,7 +909,7 @@ if __name__ == "__main__":
 
     HOST, PORT = host, port
     print("running on %s:%d" % (HOST, PORT))
-    app.run(host=HOST, port=PORT, threaded=threaded)
-    app.debug = debug
+    app.run(host=HOST, port=PORT, threaded=threaded, debug = True)
+    app.debug = True
 
   run()
