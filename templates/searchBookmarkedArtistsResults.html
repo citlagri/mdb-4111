@@ -1,0 +1,61 @@
+<h4>Your Bookmarked Artists</h4>
+<table>
+  <tr>
+    <th>Stage Name</th>
+    <th>Birthday</th>
+    <th>Real Name</th>
+    <th>Year Started</th>
+    <th>Years Active</th>
+    <th>Genre</th>
+    <th>Role</th>
+    <th>Saved Since</th>
+  </tr>
+
+  <tr>
+    <td>
+      {%for n in stagenameis%}
+      <div>{{n}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for y in birthdays%}
+      <div>{{y}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for t in realname%}
+      <div>{{t}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for d in yearstarted%}
+      <div>{{d}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for m in yearsactive%}
+      <div>{{m}}</div>
+      {% endfor %}
+    </td>
+
+    <td>
+      {%for m in genre%}
+      <div>{{m}}</div>
+      {% endfor %}
+    </td>
+
+    <td>
+      {%for m in role%}
+      <div>{{m}}</div>
+      {% endfor %}
+    </td>
+
+    <td>
+      {%for m in since%}
+      <div>{{m}}</div>
+      {% endfor %}
+    </td>
+  </tr>
+</table>
+
+<p><a href="/home">homepage</a></p>

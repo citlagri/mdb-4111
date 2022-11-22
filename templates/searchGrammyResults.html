@@ -1,0 +1,40 @@
+<table>
+  <tr>
+    <th>Award</th>
+    <th>Year</th>
+    <th>Title</th>
+    <th>Release Date</th>
+    <th>Main Artist</th>
+  </tr>
+
+  <tr>
+    <td>
+      {%for n in award%}
+      <div>{{n}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for y in year%}
+      <div>{{y}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for t in title%}
+      <div>{{t}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for d in releasedate%}
+      <div>{{d}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for m in mainartist%}
+      <div>{{m}}</div>
+      {% endfor %}
+    </td>
+  </tr>
+</table>
+
+<p><a href="/home">homepage</a></p>
+<p><a href="/searchGrammy">search another artist's grammys</a></p>

@@ -1,0 +1,81 @@
+<html>
+  <style>
+    h1 {
+      color: #0d4c92;
+      text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+    h2 {
+      color: #0d4c92;
+      text-align: left;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+    div {
+      color: #0d4c92;
+      margin: 5px;
+      text-align: left;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      padding-top: 2px;
+    }
+    button {
+      color: white;
+      background: #59c1bd;
+      border: 1px solid #0d4c92;
+      padding: 10px;
+      border-radius: 15px;
+    }
+    button:hover {
+      background: white;
+      color: #59c1bd;
+      cursor: pointer;
+    }
+  </style>
+  <body>
+    <h1>Bookmark an Aritst</h1>
+    {% with messages = get_flashed_messages() %} {% if messages %} {% for
+    message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %} {% endif %} {% endwith %}
+    <form action="/addBookmarkArtist" method="POST">
+      <div>
+        Enter your userid<br />
+        <input
+          type="text"
+          name="userid"
+          placeholder="123sy"
+          maxlength="20"
+        /><br />
+      </div>
+      <br />
+      <div>
+        Enter the Artist you want to bookmark <br />
+        <input
+          type="text"
+          name="artist"
+          placeholder="Beyoncé"
+          maxlength="60"
+        /><br />
+      </div>
+      <br />
+
+      <div>
+        Enter today's date in the form 20xx-MM-DD <br />
+        <input
+          type="date"
+          id="since"
+          name="since"
+          value="2022-07-16"
+          min="2022-01-01"
+          max="2050-12-31"
+        />
+      </div>
+
+      <br />
+      <button type="submit">Submit</button>
+    </form>
+    <p><a href="/home">homepage</a></p>
+  </body>
+</html>

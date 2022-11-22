@@ -1,0 +1,94 @@
+<html>
+  <style>
+    h1 {
+      color: #0d4c92;
+      text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+    h2 {
+      color: #0d4c92;
+      text-align: left;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+    div {
+      color: #0d4c92;
+      margin: 5px;
+      text-align: left;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      padding-top: 2px;
+    }
+    button {
+      color: white;
+      background: #59c1bd;
+      border: 1px solid #0d4c92;
+      padding: 10px;
+      border-radius: 15px;
+    }
+    button:hover {
+      background: white;
+      color: #59c1bd;
+      cursor: pointer;
+    }
+  </style>
+  <body>
+  <h1>HOME</h1>
+    <div>
+      This is ur userid: {{data}}. Don't share this information with anyone
+    </div>
+
+    <form action="/home" method="POST">
+        <div>Want to see all your reviews? Enter Your Userid <br>
+            <input type="text" name="userid" placeholder="#" maxlength="20"/><br>
+        </div><br>
+        <button type="submit">Submit</button>
+    </form>
+
+
+ <table>
+  <tr>
+    <th>Content</th>
+    <th>Title Name</th>
+    <th>Rating</th>
+    <th>Since</th>
+  </tr>
+
+<div> these are your reviews:
+        {{reviews}}
+</div>
+  <tr>
+    <td>
+      {%for n in c%}
+        <div>{{n}}</div>
+      {% endfor %}
+
+    </td>
+    <td>
+      {%for n in tm%}
+        <div>{{n}}</div>
+      {% endfor %}
+
+    </td>
+    <td>
+      {%for n in rating%}
+       <div>{{n}}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {%for n in since%}
+       <div>{{n}}</div>
+      {% endfor %}
+
+    </td>
+  </tr>
+  </table>
+
+    <h2>See all artist</h2>
+    <h3>See all Grammy's</h3>
+
+    </form>
+  </body>
+</html>
+
