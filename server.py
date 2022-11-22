@@ -95,8 +95,9 @@ def teardown_request(exception):
 # see for routing: https://flask.palletsprojects.com/en/2.0.x/quickstart/?highlight=routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
-@app.route('/')
-def index():
+#@app.route('/')
+#def index():
+
   """
   request is a special object that Flask provides to access web request information:
 
@@ -110,17 +111,17 @@ def index():
 
 
   # DEBUG: this is debugging code to see what request looks like
-  print(request.args)
+  #print(request.args)
 
 
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close()
+ # cursor = g.conn.execute("SELECT name FROM test")
+ # names = []
+ # for result in cursor:
+  #  names.append(result['name'])  # can also be accessed using result[0]
+ # cursor.close()
 #------------------------------------------------------------------------------------------------
 
   #
@@ -149,14 +150,14 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names)
+  #context = dict(data = names)
 
 
   #
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
-  return render_template("index.html", **context)
+  #return render_template("index.html", **context)
 
 #------------------------------------------------------------------------------------------------
 #
@@ -167,9 +168,9 @@ def index():
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
 #
-@app.route('/another')
-def another():
-  return render_template("another.html")
+#@app.route('/another')
+#def another():
+ # return render_template("another.html")
 
 #------------------------------------------------------------------------------------------------
 
@@ -211,7 +212,7 @@ def home():
 
 #------------------------------------------------------------------------------------------------
 #CIT'S HOME PAGE
-@app.route('/homepage', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def homepage():
    return render_template("homepage.html", boolean=True)
 
@@ -743,7 +744,7 @@ def addBookmarkArtist():
         return render_template("error.html", boolean = True)
       else:
         g.conn.execute('INSERT INTO bookmarks_artist(uid, artist_id, since) VALUES (%s, %s, %s)', (userid, mainartist[0], since))
-        return render_template("homepage.html", boolean = True)
+        return render_template("home.html", boolean = True)
     return render_template("addBookmarkArtist.html", boolean = True)
 
 #------------------------------------------------------------------------------------------------
@@ -866,7 +867,7 @@ def addBookmarkSingle():
         return render_template("error.html", boolean = True)
       else:
         g.conn.execute('INSERT INTO bookmarks_singles(uid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s)', (userid, title[0], releasedate[0], mainartist[0], since))
-        return render_template("homepage.html", boolean = True)
+        return render_template("home.html", boolean = True)
 
      # g.conn.execute('INSERT INTO bookmarks_single(uid, title, release_date, main_artist, since) VALUES (%s, %s, %s, %s, %s)', (userid, title[0], releasedate[0], mainartist[0], since))
       #return render_template("homepage.html", boolean = True)
